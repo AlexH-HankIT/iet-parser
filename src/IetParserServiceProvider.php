@@ -1,6 +1,6 @@
 <?php
 
-namespace mrcrankhank\ietParser;
+namespace MrCrankHank\IetParser;
 
 use Illuminate\Support\ServiceProvider;
 
