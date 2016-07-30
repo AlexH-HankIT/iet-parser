@@ -1,0 +1,11 @@
+{
+    "name": "mrcrankhank/ietParser",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Alexander Hank",
+            "email": "mail@alexander-hank.de"
+        }
+    ],
+    "require": {}
+}
