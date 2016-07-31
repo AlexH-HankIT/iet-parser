@@ -7,10 +7,24 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use PHPUnit_Framework_TestCase;
 
+/**
+ * Class GlobalOptionParserTestAdd
+ * @package MrCrankHank\IetParser\tests
+ */
 class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
+    /**
+     * @var
+     */
     protected $expectedContent;
+
+    /**
+     * @var
+     */
     protected $contentAfterWrite;
 
+    /**
+     * Do some setup and then write the test data
+     */
     protected function write() {
         $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
 
@@ -28,6 +42,9 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
         $filesystem->delete('iet.test-running.conf');
     }
 
+    /**
+     * GlobalOptionParser test
+     */
     public function testAdd() {
         $this->write();
 

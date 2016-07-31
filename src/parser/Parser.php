@@ -20,12 +20,24 @@ class Parser
      */
     protected $fileContent;
 
+    /**
+     * @var bool
+     */
     protected $test;
 
+    /**
+     * @var
+     */
     protected $filePath;
 
+    /**
+     * @var
+     */
     protected $comments;
 
+    /**
+     * @var
+     */
     protected $originalContent;
 
     /**
@@ -94,6 +106,10 @@ class Parser
         }
     }
 
+    /**
+     * @param Collection $fileContent
+     * @return static
+     */
     private function handleComments(Collection $fileContent) {
         $fileContent = $fileContent->filter(function ($line, $key) {
             if (empty($line)) {
@@ -119,18 +135,32 @@ class Parser
         return $fileContent->flip();
     }
 
+    /**
+     *
+     */
     protected function findTarget() {
 
     }
 
+    /**
+     *
+     */
     protected function getTargetOptionCount() {
 
     }
 
+    /**
+     * @param Collection $fileContent
+     * @param            $option
+     * @return mixed
+     */
     protected function findGlobalOption(Collection $fileContent, $option) {
         return $fileContent->search($option);
     }
 
+    /**
+     *
+     */
     protected function getGlobalOptionCount() {
 
     }
