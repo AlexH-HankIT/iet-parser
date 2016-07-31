@@ -66,9 +66,23 @@ class Parser
     {
         $this->fileContent = $this->fileContent->flip();
 
-        $fileContent = $this->fileContent->all() + $this->comments->all();
+        // convert collections to arrays
+        $fileContent = $this->fileContent->all();
+        $comments = $this->comments->all();
 
+        // save new line to variable and delete it from the array
+        // so ksort can sort the indexes numerically
+        $new = $fileContent['new'];
+        unset($fileContent['new']);
+
+        // merge config with comments
+        $fileContent = $fileContent + $comments;
+
+        // sort the array, so the lines are correct
         ksort($fileContent);
+
+        // push the new line as first item
+        array_unshift($fileContent, $new);
 
         $fileContent = implode("\n", $fileContent);
 
