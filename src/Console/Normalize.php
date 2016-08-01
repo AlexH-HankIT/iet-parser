@@ -7,6 +7,7 @@ use MrCrankHank\IetParser\Parser\Parser;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use MrCrankHank\IetParser\Parser\Diff;
+use MrCrankHank\IetParser\Parser\Normalize as ParserNormalize;
 
 class Normalize extends Command
 {
@@ -37,19 +38,6 @@ class Normalize extends Command
 
     public function handle()
     {
-        /*
-         * normalize file
-         * artisan command
-         * check given file for the following:
-         * multiple spaces are replaced with one
-         * spaces at the start or end are deleted
-         * newlines are deleted
-         * inline comments are removed
-         * merge multi line definitions in one line
-
-         Give user a choice for automatic correction
-         */
-
         $local = new Local(__DIR__ . '\..\..\tests\GlobalOptionParserAdd\files', LOCK_EX);
 
         $filesystem = new Filesystem($local);
@@ -59,43 +47,8 @@ class Normalize extends Command
 
         $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
 
-        $parser = new Parser($filesystem, 'iet.test-running.conf');
+        $normalize = new ParserNormalize($filesystem, 'iet.test-running.conf');
 
-        $originalFileContent = $parser->getRaw();
-
-        // remove spaces and the ending/beginning
-        $fileContent = $originalFileContent->map(function($line, $key) {
-            return trim($line, ' ');
-        });
-
-        // create string from array
-        $fileContentString = implode("\n", $fileContent->all());
-
-        // replace multiple newlines with a single one
-        $fileContentString = preg_replace('/[\r\n|\n]+/', "\n", $fileContentString);
-
-        // replace multiple spaces with a single one
-        $fileContentString = preg_replace('/\s\s+/', ' ', $fileContentString);
-
-        // merge escaped lines into one
-        $fileContentString = str_replace("\\\n", '', $fileContentString);
-
-        // create collection
-        $fileContent = collect(explode("\n", $fileContentString));
-
-        // check for inline comments
-        $fileContent = $fileContent->map(function($line) {
-            $position = strpos($line, '#');
-
-            if ($position !== 0 && $position !== false) {
-                return trim(substr_replace($line, '', $position), ' ');
-            } else {
-                return $line;
-            }
-        });
-
-        // $fileContentString = implode("\n", $fileContent->all());
-        // $originalFileContentString = implode("\n", $originalFileContent->all());
-        // echo Diff::toString(Diff::compare($originalFileContentString, $fileContentString));
+        echo $normalize->normalizeDiff();
     }
 }
