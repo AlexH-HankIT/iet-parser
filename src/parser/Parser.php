@@ -70,6 +70,23 @@ class Parser
     }
 
     /**
+     * Retrieves the file's content exactly as it is
+     */
+    public function getRaw()
+    {
+        return collect(explode("\n", $this->filesystem->read($this->filePath)));
+    }
+
+    /**
+     * Retrieves the file's global section without any comennts or newlines
+     */
+    public function getGlobalSection()
+    {
+        // go through every line and replace multiple spaces with one space
+        // replace multiple newlines with one newline
+    }
+
+    /**
      * Merge the file's content with comments
      * and new lines and write it back
      *

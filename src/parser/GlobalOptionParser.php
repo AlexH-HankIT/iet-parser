@@ -3,6 +3,7 @@
 namespace MrCrankHank\IetParser\Parser;
 
 use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
 
 /**
  * Class GlobalOption
@@ -11,7 +12,7 @@ use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
  * Global options are similar to target specific options.
  * But they are defined before any target definition
  *
- * @package mrcrankhank\ietParser\parser
+ * @package MrCrankHank\IetParser\Parser;
  */
 class GlobalOptionParser extends Parser {
     /**
@@ -41,6 +42,10 @@ class GlobalOptionParser extends Parser {
      * @return $this
      */
     public function remove($option) {
+        $fileContent = $this->get();
+
+        dd($fileContent);
+
         return $this;
     }
 
