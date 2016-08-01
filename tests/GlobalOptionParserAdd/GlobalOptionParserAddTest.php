@@ -55,4 +55,48 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
             $filesystem->delete('iet.test-running.conf');
         }
     }
+
+    /**
+     * Test the addOutgoingUser() helper method
+     */
+    public function testAddOutgoingUserHelperMethod() {
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+
+        $filesystem = new Filesystem($local);
+
+        $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
+
+        $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
+
+        $parser->addOutgoingUser("User", "password")->write();
+
+        $contentAfterWrite = $filesystem->read('iet.test-running.conf');
+        $expectedContent = $filesystem->read('iet.expected2.conf');
+
+        $filesystem->delete('iet.test-running.conf');
+
+        $this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
+    }
+
+    /**
+     * Test the addIncomingUser() helper method
+     */
+    public function testAddIncomingUserHelperMethod() {
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+
+        $filesystem = new Filesystem($local);
+
+        $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
+
+        $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
+
+        $parser->addIncomingUser("User", "password")->write();
+
+        $contentAfterWrite = $filesystem->read('iet.test-running.conf');
+        $expectedContent = $filesystem->read('iet.expected3.conf');
+
+        $filesystem->delete('iet.test-running.conf');
+
+        $this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
+    }
 }

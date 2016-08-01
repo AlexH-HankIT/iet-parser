@@ -6,6 +6,7 @@ https://manpages.debian.org/cgi-bin/man.cgi?sektion=5&query=ietd.conf&apropos=0&
 
 ## GlobalOptionParser
 ### Add
+#### Basic usage
 ```php
     $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
 
@@ -14,4 +15,27 @@ https://manpages.debian.org/cgi-bin/man.cgi?sektion=5&query=ietd.conf&apropos=0&
     $parser = new GlobalOptionParser($filesystem, 'file.txt');
 
     $parser->add("test")->write();
+```
+
+#### Helper methods:
+##### addIncomingUser()
+```php
+    $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+    
+    $filesystem = new Filesystem($local);
+    
+    $parser = new GlobalOptionParser($filesystem, 'file.txt');
+    
+    $parser->addIncomingUser("user", "password")->write();
+```
+
+##### addOutgoingUser()
+```php
+    $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+    
+    $filesystem = new Filesystem($local);
+    
+    $parser = new GlobalOptionParser($filesystem, 'file.txt');
+    
+    $parser->addOutgoingUser("user", "password")->write();
 ```
