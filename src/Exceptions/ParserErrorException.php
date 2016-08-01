@@ -1,7 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: alexander.hank
- * Date: 30.07.2016
- * Time: 15:54
- */
+
+namespace MrCrankHank\IetParser\Exceptions;
+
+class ParserErrorException extends BaseException
+{
+    //
+}

@@ -2,6 +2,7 @@
 
 namespace MrCrankHank\IetParser\tests;
 
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 use MrCrankHank\IetParser\Parser\GlobalOptionParser;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
@@ -13,19 +14,9 @@ use PHPUnit_Framework_TestCase;
  */
 class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
     /**
-     * @var
+     * Test if I can add a parameter to the file
      */
-    protected $expectedContent;
-
-    /**
-     * @var
-     */
-    protected $contentAfterWrite;
-
-    /**
-     * Do some setup and then write the test data
-     */
-    protected function write() {
+    public function testAdd() {
         $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
 
         $filesystem = new Filesystem($local);
@@ -36,18 +27,32 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
         $parser->add("test")->write();
 
-        $this->contentAfterWrite = $filesystem->read('iet.test-running.conf');
-        $this->expectedContent = $filesystem->read('iet.expected.conf');
+        $contentAfterWrite = $filesystem->read('iet.test-running.conf');
+        $expectedContent = $filesystem->read('iet.expected.conf');
 
         $filesystem->delete('iet.test-running.conf');
+
+        $this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
     }
 
     /**
-     * GlobalOptionParser test
+     * Test if the duplication check is working
      */
-    public function testAdd() {
-        $this->write();
+    public function testDuplicationError() {
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
 
-        $this->assertEquals(preg_split('/\r\n|\r|\n/', $this->expectedContent), preg_split('/\r\n|\r|\n/', $this->contentAfterWrite));
+        $filesystem = new Filesystem($local);
+
+        $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
+
+        $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
+
+        try {
+            $parser->add("test")->write();
+            $parser->add("test")->write();
+        } catch (DuplicationErrorException $e) {
+            $this->assertEquals($e->getMessage(), 'The option test is already set.');
+            $filesystem->delete('iet.test-running.conf');
+        }
     }
 }

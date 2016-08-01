@@ -2,6 +2,8 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
+
 /**
  * Class GlobalOption
  *
@@ -13,6 +15,7 @@ namespace MrCrankHank\IetParser\Parser;
  */
 class GlobalOptionParser extends Parser {
     /**
+     * @throws DuplicationErrorException
      * @param $option
      * @return $this
      */
@@ -25,7 +28,7 @@ class GlobalOptionParser extends Parser {
         if ($id === false) {
             $fileContent->prepend('new', $option);
         } else {
-            // ToDo: Throw a DuplicationErrorException here
+            throw new DuplicationErrorException('The option ' . $option . ' is already set.');
         }
 
         $this->fileContent = $fileContent;
