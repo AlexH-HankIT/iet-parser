@@ -4,6 +4,7 @@ namespace MrCrankHank\IetParser\Parser;
 
 use League\Flysystem\Filesystem;
 use Illuminate\Support\Collection;
+
 /**
  * Class Parser
  * @package mrcrankhank\ietParser\parser
@@ -19,11 +20,6 @@ class Parser
      * @var
      */
     protected $fileContent;
-
-    /**
-     * @var bool
-     */
-    protected $test;
 
     /**
      * @var
@@ -44,13 +40,11 @@ class Parser
      * Parser constructor.
      * @param Filesystem $filesystem
      * @param            $filePath
-     * @param bool       $test
      */
-    public function __construct(Filesystem $filesystem, $filePath, $test = false)
+    public function __construct(Filesystem $filesystem, $filePath)
     {
         $this->filesystem = $filesystem;
         $this->filePath = $filePath;
-        $this->test = $test;
     }
 
     /**
@@ -60,9 +54,15 @@ class Parser
     {
         $fileContent = $this->getRaw();
 
-        $fileContent =  $this->handleComments($fileContent);
+        $fileContent = $this->handleComments($fileContent);
 
         return $fileContent;
+    }
+
+    public function getGlobal()
+    {
+        // extract global section from file content
+        // return the global section
     }
 
     /**
@@ -70,7 +70,6 @@ class Parser
      */
     public function getRaw()
     {
-
         $fileContent = $this->filesystem->read($this->filePath);
 
         $this->originalContent = $fileContent;
@@ -94,16 +93,16 @@ class Parser
      */
     public function write()
     {
-        $this->fileContent = $this->fileContent->flip();
-
         // convert collections to arrays
         $fileContent = $this->fileContent->all();
         $comments = $this->comments->all();
 
-        // save new line to variable and delete it from the array
-        // so ksort can sort the indexes numerically
-        $new = $fileContent['new'];
-        unset($fileContent['new']);
+        if (isset($fileContent['new'])) {
+            // save new line to variable and delete it from the array
+            // so ksort can sort the indexes numerically
+            $new = $fileContent['new'];
+            unset($fileContent['new']);
+        }
 
         // merge config with comments
         $fileContent = $fileContent + $comments;
@@ -111,24 +110,32 @@ class Parser
         // sort the array, so the lines are correct
         ksort($fileContent);
 
-        // push the new line as first item
-        array_unshift($fileContent, $new);
+        if (isset($fileContent['new'])) {
+            // push the new line as first item
+            array_unshift($fileContent, $new);
+        }
 
         $fileContent = implode("\n", $fileContent);
 
-        if ($this->test) {
-            dd($this->originalContent, $fileContent);
-        } else {
-            // ToDo: xdiff_string_diff($this->originalContent. $fileContent)
-            $this->filesystem->update($this->filePath, $fileContent);
-        }
+        $this->filesystem->update($this->filePath, $fileContent);
+    }
+
+    /**
+     * Write a raw string as file
+     *
+     * @param $string
+     */
+    public function writeRaw($string)
+    {
+        $this->filesystem->update($this->filePath, $string);
     }
 
     /**
      * @param Collection $fileContent
-     * @return static
+     * @return Collection
      */
-    private function handleComments(Collection $fileContent) {
+    private function handleComments(Collection $fileContent)
+    {
         $fileContent = $fileContent->filter(function ($line, $key) {
             if (empty($line)) {
                 // save empty lines in comments array
@@ -150,20 +157,22 @@ class Parser
         $this->comments = collect($this->comments);
 
         // Flip collection to preserve the indexes
-        return $fileContent->flip();
+        return $fileContent;
     }
 
     /**
      *
      */
-    protected function findTarget() {
+    protected function findTarget()
+    {
 
     }
 
     /**
      *
      */
-    protected function getTargetOptionCount() {
+    protected function getTargetOptionCount()
+    {
 
     }
 
@@ -172,14 +181,33 @@ class Parser
      * @param            $option
      * @return mixed
      */
-    protected function findGlobalOption(Collection $fileContent, $option) {
+    protected function findGlobalOption(Collection $fileContent, $option)
+    {
         return $fileContent->search($option);
     }
 
     /**
      *
      */
-    protected function getGlobalOptionCount() {
+    protected function getGlobalOptionCount()
+    {
 
+    }
+
+    /**
+     * Return the id of the first target definition
+     *
+     * @param Collection $fileContent
+     * @return mixed
+     */
+    protected function findFirstTargetDefinition(Collection $fileContent)
+    {
+        $firstTarget = $fileContent->first(function($key, $value) {
+            if (substr($value, 0, 6) === 'Target') {
+                return true;
+            }
+        });
+
+        return $fileContent->search($firstTarget, true);
     }
 }

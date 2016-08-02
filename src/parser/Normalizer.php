@@ -2,7 +2,7 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
-use League\Flysystem\Filesystem;
+use MrCrankHank\IetParser\Parser\Parser;
 
 /**
  * Class Normalizer
@@ -11,24 +11,17 @@ use League\Flysystem\Filesystem;
 class Normalizer
 {
     /**
-     * @var Filesystem
+     * @var Parser
      */
-    protected $filesystem;
-
-    /**
-     * @var
-     */
-    protected $filePath;
+    protected $parser;
 
     /**
      * Normalize constructor.
-     * @param Filesystem $filesystem
-     * @param $filePath
+     * @param Parser $parser
      */
-    public function __construct(Filesystem $filesystem, $filePath)
+    public function __construct(Parser $parser)
     {
-        $this->filePath = $filePath;
-        $this->filesystem = $filesystem;
+        $this->parser = $parser;
     }
 
     /**
@@ -43,9 +36,7 @@ class Normalizer
      */
     protected function normalize()
     {
-        $parser = new Parser($this->filesystem, $this->filePath);
-
-        $originalFileContent = $parser->getRaw();
+        $originalFileContent = $this->parser->getRaw();
 
         // remove spaces and the ending/beginning
         $fileContent = $originalFileContent->map(function($line, $key) {
@@ -87,7 +78,8 @@ class Normalizer
     /**
      * Return a diff of the normalization without writing anything
      */
-    public function diff() {
+    public function diff()
+    {
         $data = $this->normalize();
         return Diff::toString(Diff::compare($data['originalFileContentString'], $data['fileContentString']));
     }
@@ -95,9 +87,9 @@ class Normalizer
     /**
      * Write the normalized data to the file
      */
-    public function write() {
-        // ToDo: Write data
-        return $this->normalize();
+    public function write()
+    {
+        $this->parser->writeRaw($this->normalize()['fileContentString']);
     }
 
     /**
