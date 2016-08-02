@@ -20,7 +20,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testAdd() {
         // Create new filesystem adapter
-        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
 
         // create new filesystem
         $filesystem = new Filesystem($local);
@@ -62,7 +62,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testDuplicationError() {
         // Create new filesystem adapter
-        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
 
         // create new filesystem
         $filesystem = new Filesystem($local);
@@ -99,7 +99,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testAddOutgoingUserHelperMethod() {
         // Create new filesystem adapter
-        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
 
         // create new filesystem
         $filesystem = new Filesystem($local);
@@ -139,7 +139,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testAddIncomingUserHelperMethod() {
         // Create new filesystem adapter
-        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'files', LOCK_EX);
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
 
         // create new filesystem
         $filesystem = new Filesystem($local);
