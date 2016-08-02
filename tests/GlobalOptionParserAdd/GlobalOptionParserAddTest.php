@@ -53,7 +53,8 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
         $filesystem->delete('iet.test-running.conf');
 
-        $this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
+        //$this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
+        $this->assertEquals($contentAfterWrite, $expectedContent);
     }
 
     /**
@@ -82,15 +83,15 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
             try {
                 $parser->add("IncomingUser user password")->write();
                 $parser->add("IncomingUser user password")->write();
+                $this->fail("Test did not throw DuplicationError exception!");
             } catch (DuplicationErrorException $e) {
-                $filesystem->delete('iet.test-running.conf');
                 $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
+            } finally {
+                $filesystem->delete('iet.test-running.conf');
             }
         } else {
             $this->fail("The normalizer did not properly normalize the file!");
         }
-
-        $this->fail("Test did not throw DuplicationError exception!");
     }
 
     /**
@@ -119,7 +120,6 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
             try {
                 $parser->addOutgoingUser("user", "password")->write();
             } catch (DuplicationErrorException $e) {
-                $filesystem->delete('iet.test-running.conf');
                 $this->assertEquals($e->getMessage(), 'The option OutgoingUser user password is already set.');
             }
         } else {
@@ -160,7 +160,6 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
             try {
                 $parser->addIncomingUser("user", "password")->write();
             } catch (DuplicationErrorException $e) {
-                $filesystem->delete('iet.test-running.conf');
                 $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
             }
         } else {

@@ -110,7 +110,7 @@ class Parser
         // sort the array, so the lines are correct
         ksort($fileContent);
 
-        if (isset($fileContent['new'])) {
+        if (!empty($new)) {
             // push the new line as first item
             array_unshift($fileContent, $new);
         }
