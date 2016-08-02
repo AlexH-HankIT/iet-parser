@@ -5,10 +5,10 @@ namespace MrCrankHank\IetParser\Parser;
 use League\Flysystem\Filesystem;
 
 /**
- * Class Normalize
+ * Class Normalizer
  * @package MrCrankHank\IetParser\Parser
  */
-class Normalize
+class Normalizer
 {
     /**
      * @var Filesystem
@@ -82,14 +82,12 @@ class Normalize
             'fileContentString' => implode("\n", $fileContent->all()),
             'originalFileContentString' => implode("\n", $originalFileContent->all())
         ];
-
-
     }
 
     /**
      * Return a diff of the normalization without writing anything
      */
-    public function normalizeDiff() {
+    public function diff() {
         $data = $this->normalize();
         return Diff::toString(Diff::compare($data['originalFileContentString'], $data['fileContentString']));
     }
@@ -97,8 +95,24 @@ class Normalize
     /**
      * Write the normalized data to the file
      */
-    public function normalizeWrite() {
+    public function write() {
         // ToDo: Write data
         return $this->normalize();
+    }
+
+    /**
+     * Verify if a file is already normalized
+     *
+     * @return boolean
+     */
+    public function check()
+    {
+        $data = $this->normalize();
+
+        if (strcmp($data['originalFileContentString'], $data['fileContentString']) !== 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

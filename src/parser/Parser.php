@@ -56,13 +56,9 @@ class Parser
     /**
      * Retrieves the file's content without any comments or newlines
      */
-    protected function get()
+    public function get()
     {
-        $fileContent = $this->filesystem->read($this->filePath);
-
-        $this->originalContent = $fileContent;
-
-        $fileContent = collect(explode("\n", $fileContent));
+        $fileContent = $this->getRaw();
 
         $fileContent =  $this->handleComments($fileContent);
 
@@ -74,7 +70,12 @@ class Parser
      */
     public function getRaw()
     {
-        return collect(explode("\n", $this->filesystem->read($this->filePath)));
+
+        $fileContent = $this->filesystem->read($this->filePath);
+
+        $this->originalContent = $fileContent;
+
+        return collect(explode("\n", $fileContent));
     }
 
     /**
