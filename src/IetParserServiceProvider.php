@@ -3,8 +3,9 @@
 namespace MrCrankHank\IetParser;
 
 use Illuminate\Support\ServiceProvider;
+use MrCrankHank\IetParser\Parser\Normalizer;
 use MrCrankHank\IetParser\Console\Normalize;
-use MrCrankHank\IetParser\Parser\GlobalOptionParser;
+use MrCrankHank\IetParser\Parser\GlobalOptionParser;;
 
 class IetParserServiceProvider extends ServiceProvider
 {
@@ -29,8 +30,12 @@ class IetParserServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(GlobalOptionParser::class, function($app, $parameters) {
-            return new GlobalOptionParser($parameters['filesystem'], $parameters['filePath'], $parameters['test'] ? true : false);
+        $this->app->bind(Normalizer::class, function($app, $parameters) {
+            return new Normalizer($parameters['parser']);
+        });
+
+        $this->app->bind(GlobalOptionParser::class, function($app, $parameters) {
+            return new GlobalOptionParser($parameters['filesystem'], $parameters['filePath']);
         });
 
         $this->commands($this->commands);

@@ -41,12 +41,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
             $normalizer->write();
 
             if ($normalizer->check()) {
-                try {
-                    $parser->add("IncomingUser user password")->write();
-                } catch (DuplicationErrorException $e) {
-                    $filesystem->delete('iet.test-running.conf');
-                    $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
-                }
+                $parser->add("IncomingUser user password")->write();
             } else {
                 $this->fail("The normalizer did not properly normalize the file!");
             }
