@@ -134,7 +134,7 @@ class GlobalOptionParser extends Parser
      *
      * @return GlobalOptionParser
      */
-    public function removeIncomingUser($username, $password)
+    public function deleteIncomingUser($username, $password)
     {
         return $this->delete('IncomingUser ' . $username . ' ' . $password);
     }
@@ -147,7 +147,7 @@ class GlobalOptionParser extends Parser
      *
      * @return GlobalOptionParser
      */
-    public function removeOutgoingUser($username, $password)
+    public function deleteOutgoingUser($username, $password)
     {
         return $this->delete('OutgoingUser ' . $username . ' ' . $password);
     }
