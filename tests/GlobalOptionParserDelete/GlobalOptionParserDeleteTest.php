@@ -41,7 +41,7 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
             $contentAfterWrite = $filesystem->read('iet.test-running.conf');
             $expectedContent = $filesystem->read('iet.expected.testDelete.conf');
 
-            //$filesystem->delete('iet.test-running.conf');
+            $filesystem->delete('iet.test-running.conf');
 
             $this->assertEquals($contentAfterWrite, $expectedContent);
         }
