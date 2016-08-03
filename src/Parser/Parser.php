@@ -68,8 +68,8 @@ class Parser
     /**
      * Parser constructor.
      *
-     * @param Filesystem $filesystem
-     * @param string     $filePath
+     * @param Filesystem $filesystem Filesystem instance
+     * @param string     $filePath   Path to the file
      */
     public function __construct(Filesystem $filesystem, $filePath)
     {
@@ -86,7 +86,7 @@ class Parser
     {
         $fileContent = $this->getRaw();
 
-        $fileContent = $this->handleComments($fileContent);
+        $fileContent = $this->_handleComments($fileContent);
 
         return $fileContent;
     }
@@ -108,6 +108,8 @@ class Parser
     /**
      * Merge the file's content with comments
      * and new lines and write it back
+     *
+     * @return void
      */
     public function write()
     {
@@ -141,7 +143,9 @@ class Parser
     /**
      * Write a raw string as file
      *
-     * @param $string
+     * @param string $string String to be written
+     *
+     * @return void
      */
     public function writeRaw($string)
     {
@@ -151,11 +155,11 @@ class Parser
     /**
      * Extract comments from the file
      *
-     * @param Collection $fileContent
+     * @param Collection $fileContent Collection of the file's content
      *
      * @return Collection
      */
-    private function handleComments(Collection $fileContent)
+    private function _handleComments(Collection $fileContent)
     {
         $fileContent = $fileContent->filter(function ($line, $key) {
             if (empty($line)) {
@@ -184,8 +188,9 @@ class Parser
     /**
      * Find a specifiy global option
      *
-     * @param Collection $fileContent
-     * @param            $option
+     * @param Collection $fileContent Collection of the file's content
+     * @param string     $option      Option to be found
+     *
      * @return mixed
      */
     protected function findGlobalOption(Collection $fileContent, $option)
@@ -196,12 +201,13 @@ class Parser
     /**
      * Return the id of the first target definition
      *
-     * @param Collection $fileContent
+     * @param Collection $fileContent Collection of the file's content
+     *
      * @return mixed
      */
     protected function findFirstTargetDefinition(Collection $fileContent)
     {
-        $firstTarget = $fileContent->first(function($key, $value) {
+        $firstTarget = $fileContent->first(function ($key, $value) {
             if (substr($value, 0, 6) === 'Target') {
                 return true;
             }

@@ -5,6 +5,7 @@
  *
  * PHP version 5.6
  *
+ * @codingStandardsIgnoreStart
  * @category Parser
  * @package  MrCrankHank\IetParser\Parser
  * @author   Stephen Morley http://stephenmorley.org/
