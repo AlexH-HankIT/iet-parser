@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * This file contains the Parser class
+ *
+ * PHP version 5.6
+ *
+ * @category Parser
+ * @package  MrCrankHank\IetParser\Parser
+ * @author   Alexander Hank <mail@alexander-hank.de>
+ * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ * @link     null
+ */
+
 namespace MrCrankHank\IetParser\Parser;
 
 use League\Flysystem\Filesystem;
@@ -7,39 +19,57 @@ use Illuminate\Support\Collection;
 
 /**
  * Class Parser
- * @package mrcrankhank\ietParser\parser
+ *
+ * @category Parser
+ * @package  MrCrankHank\IetParser\Parser
+ * @author   Alexander Hank <mail@alexander-hank.de>
+ * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ * @link     null
  */
 class Parser
 {
     /**
+     * Contains a Filesystem instance
+     *
      * @var Filesystem
      */
     protected $filesystem;
 
     /**
+     * Contains the file content
+     *
      * @var
      */
     protected $fileContent;
 
     /**
+     * Contains the file path
+     *
      * @var
      */
     protected $filePath;
 
     /**
+     * Contains the extracted comments
+     * of the file
+     *
      * @var
      */
     protected $comments;
 
     /**
+     * Contains the file content
+     * without any modifications
+     *
      * @var
      */
     protected $originalContent;
 
     /**
      * Parser constructor.
+     *
      * @param Filesystem $filesystem
-     * @param            $filePath
+     * @param string     $filePath
      */
     public function __construct(Filesystem $filesystem, $filePath)
     {
@@ -49,6 +79,8 @@ class Parser
 
     /**
      * Retrieves the file's content without any comments or newlines
+     *
+     * @return Collection
      */
     public function get()
     {
@@ -59,14 +91,10 @@ class Parser
         return $fileContent;
     }
 
-    public function getGlobal()
-    {
-        // extract global section from file content
-        // return the global section
-    }
-
     /**
      * Retrieves the file's content exactly as it is
+     *
+     * @return string
      */
     public function getRaw()
     {
@@ -78,18 +106,8 @@ class Parser
     }
 
     /**
-     * Retrieves the file's global section without any comennts or newlines
-     */
-    public function getGlobalSection()
-    {
-        // go through every line and replace multiple spaces with one space
-        // replace multiple newlines with one newline
-    }
-
-    /**
      * Merge the file's content with comments
      * and new lines and write it back
-     *
      */
     public function write()
     {
@@ -131,7 +149,10 @@ class Parser
     }
 
     /**
+     * Extract comments from the file
+     *
      * @param Collection $fileContent
+     *
      * @return Collection
      */
     private function handleComments(Collection $fileContent)
@@ -161,22 +182,8 @@ class Parser
     }
 
     /**
+     * Find a specifiy global option
      *
-     */
-    protected function findTarget()
-    {
-
-    }
-
-    /**
-     *
-     */
-    protected function getTargetOptionCount()
-    {
-
-    }
-
-    /**
      * @param Collection $fileContent
      * @param            $option
      * @return mixed
@@ -184,14 +191,6 @@ class Parser
     protected function findGlobalOption(Collection $fileContent, $option)
     {
         return $fileContent->search($option);
-    }
-
-    /**
-     *
-     */
-    protected function getGlobalOptionCount()
-    {
-
     }
 
     /**

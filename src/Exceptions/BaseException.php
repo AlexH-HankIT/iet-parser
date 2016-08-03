@@ -1,14 +1,42 @@
 <?php
+
+/**
+ * This file contains the BaseException class.
+ * All exceptions extend it.
+ *
+ * PHP version 5.6
+ *
+ * @category Exception
+ * @package  MrCrankHank\IetParser\Exceptions
+ * @author   Alexander Hank <mail@alexander-hank.de>
+ * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ * @link     null
+ */
+
 namespace MrCrankHank\IetParser\Exceptions;
 
 use Exception;
 
-class BaseException extends Exception {
+/**
+ * Class BaseException
+ *
+ * @category Exception
+ * @package  MrCrankHank\IetParser\Exceptions
+ * @author   Alexander Hank <mail@alexander-hank.de>
+ * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ * @link     null
+ */
+class BaseException extends Exception
+{
     /**
+     * Generate full exception trace
+     *
      * @return string
+     *
      * @link http://php.net/manual/de/function.debug-backtrace.php
      */
-    protected function generateCallTrace() {
+    protected function generateCallTrace()
+    {
         $e = new \Exception();
         $trace = explode("\n", $this->getExceptionTraceAsString($e));
         // reverse array to make steps line up chronologically
@@ -19,19 +47,23 @@ class BaseException extends Exception {
         $length = count($trace);
         $result = array();
         for ($i = 0; $i < $length; $i++) {
-            $result[] = ($i + 1) . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
+            // replace '#someNum' with '$i)', set the right ordering
+            $result[] = ($i + 1) . ')' . substr($trace[$i], strpos($trace[$i], ' '));
         }
         return "\t" . implode("\n\t", $result) . "\n\n";
     }
 
     /**
-     * php's internal getTraceAsString function truncates the output
+     * Php's internal getTraceAsString function truncates the output
      *
-     * @param $exception
-     * @link http://stackoverflow.com/questions/1949345/how-can-i-get-the-full-string-of-php-s-gettraceasstring
+     * @param Exception $exception Exception of which the trace should be created
+     *
      * @return string
+     *
+     * @link http://stackoverflow.com/questions/1949345/how-can-i-get-the-full-string-of-php-s-gettraceasstring
      */
-    protected function getExceptionTraceAsString($exception) {
+    protected function getExceptionTraceAsString(Exception $exception)
+    {
         $rtn = "";
         $count = 0;
         foreach ($exception->getTrace() as $frame) {
@@ -58,18 +90,10 @@ class BaseException extends Exception {
                 $args = join(", ", $args);
             }
             if (isset($frame['file'], $frame['line'])) {
-                $rtn .= sprintf("#%s %s(%s): %s(%s)\n",
-                    $count,
-                    $frame['file'],
-                    $frame['line'],
-                    $frame['function'],
-                    $args);
+                $rtn .= sprintf("#%s %s(%s): %s(%s)\n", $count, $frame['file'], $frame['line'], $frame['function'], $args);
                 $count++;
             } else {
-                $rtn .= sprintf("#%s %s(%s)\n",
-                    $count,
-                    $frame['function'],
-                    $args);
+                $rtn .= sprintf("#%s %s(%s)\n", $count, $frame['function'], $args);
                 $count++;
             }
         }

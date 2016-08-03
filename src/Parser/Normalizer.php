@@ -1,23 +1,43 @@
 <?php
 
-namespace MrCrankHank\IetParser\Parser;
+/**
+ * This file contains the Normalizer
+ * of a iet config file via console
+ *
+ * PHP version 5.6
+ *
+ * @category Parser
+ * @package  MrCrankHank\IetParser\Parser
+ * @author   Alexander Hank <mail@alexander-hank.de>
+ * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ * @link     null
+ */
 
-use MrCrankHank\IetParser\Parser\Parser;
+namespace MrCrankHank\IetParser\Parser;
 
 /**
  * Class Normalizer
- * @package MrCrankHank\IetParser\Parser
+ *
+ * @category Parser
+ * @package  MrCrankHank\IetParser\Parser
+ * @author   Alexander Hank <mail@alexander-hank.de>
+ * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ * @link     null
  */
 class Normalizer
 {
     /**
+     * The parser instance which will
+     * be used for normalization
+     *
      * @var Parser
      */
     protected $parser;
 
     /**
      * Normalize constructor.
-     * @param Parser $parser
+     *
+     * @param Parser $parser Parser instance
      */
     public function __construct(Parser $parser)
     {
@@ -33,13 +53,15 @@ class Normalizer
      *      newlines are deleted
      *      inline comments are removed
      *      merge multi line definitions in one line
+     *
+     * @return array
      */
     protected function normalize()
     {
         $originalFileContent = $this->parser->getRaw();
 
         // remove spaces and the ending/beginning
-        $fileContent = $originalFileContent->map(function($line, $key) {
+        $fileContent = $originalFileContent->map(function ($line, $key) {
             return trim($line, ' ');
         });
 
@@ -59,7 +81,7 @@ class Normalizer
         $fileContent = collect(explode("\n", $fileContentString));
 
         // check for inline comments
-        $fileContent = $fileContent->map(function($line) {
+        $fileContent = $fileContent->map(function ($line) {
             $position = strpos($line, '#');
 
             if ($position !== 0 && $position !== false) {
@@ -69,14 +91,13 @@ class Normalizer
             }
         });
 
-        return [
-            'fileContentString' => implode("\n", $fileContent->all()),
-            'originalFileContentString' => implode("\n", $originalFileContent->all())
-        ];
+        return ['fileContentString' => implode("\n", $fileContent->all()), 'originalFileContentString' => implode("\n", $originalFileContent->all())];
     }
 
     /**
      * Return a diff of the normalization without writing anything
+     *
+     * @return string
      */
     public function diff()
     {
@@ -86,6 +107,8 @@ class Normalizer
 
     /**
      * Write the normalized data to the file
+     *
+     * @return void
      */
     public function write()
     {
