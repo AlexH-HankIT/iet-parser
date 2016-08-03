@@ -19,11 +19,11 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      * Test if I can add a parameter to the file
      */
     public function testAdd() {
-        //$dirs = ['case1_files', 'case2_files'];
+        $dirs = ['case1_files', 'case2_files'];
 
-        //foreach ($dirs as $dir) {
+        foreach ($dirs as $dir) {
             // Create new filesystem adapter
-            $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
+            $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . $dir, LOCK_EX);
 
             // create new filesystem
             $filesystem = new Filesystem($local);
@@ -58,7 +58,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
             //$this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
             $this->assertEquals($contentAfterWrite, $expectedContent);
-        //}
+        }
     }
 
     /**
