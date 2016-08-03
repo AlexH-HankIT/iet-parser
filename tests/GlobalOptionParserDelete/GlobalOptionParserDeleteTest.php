@@ -46,4 +46,36 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
             $this->assertEquals($contentAfterWrite, $expectedContent);
         }
     }
+
+    public function testNotFoundError() {
+        // Create new filesystem adapter
+        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
+
+        // create new filesystem
+        $filesystem = new Filesystem($local);
+
+        // for testing purposes: copy the sample file. So we don't change the real data
+        $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
+
+        // create parser instance
+        $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
+
+        // create normalizer instance
+        $normalizer = new Normalizer($parser);
+
+        // normalize the file
+        $normalizer->write();
+
+        if ($normalizer->check()) {
+            try {
+                $parser->delete("This wont be found");
+            } catch (NotFoundException $e) {
+                $this->assertEquals($e->getMessage(), 'The option IncomingUser user password was not found');
+            } finally {
+                $filesystem->delete('iet.test-running.conf');
+            }
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+    }
 }
