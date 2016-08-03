@@ -3,7 +3,6 @@
 namespace MrCrankHank\IetParser\tests;
 
 use PHPUnit_Framework_TestCase;
-use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use MrCrankHank\IetParser\Parser\GlobalOptionParser;
@@ -48,6 +47,8 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
     }
 
     public function testNotFoundError() {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
+
         // Create new filesystem adapter
         $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
 
@@ -67,15 +68,16 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
         $normalizer->write();
 
         if ($normalizer->check()) {
-            try {
-                $parser->delete("This wont be found");
-            } catch (NotFoundException $e) {
-                $this->assertEquals($e->getMessage(), 'The option IncomingUser user password was not found');
-            } finally {
-                $filesystem->delete('iet.test-running.conf');
-            }
+            $parser->delete('This wont be found')->write();
         } else {
             $this->fail("The normalizer did not properly normalize the file!");
         }
+
+        $filesystem->delete('iet.test-running.conf');
+    }
+
+    public function tearDown() {
+        if (file_exists(__DIR__ . '/case1_files/iet.test-running.conf')) unlink(__DIR__ . '/case1_files/iet.test-running.conf');
+        if (file_exists(__DIR__ . '/case2_files/iet.test-running.conf')) unlink(__DIR__ . '/case2_files/iet.test-running.conf');
     }
 }
