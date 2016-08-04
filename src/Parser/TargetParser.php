@@ -18,6 +18,7 @@ use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
 use Illuminate\Support\Collection;
+use League\Flysystem\Filesystem;
 
 /**
  * Class TargetParser
@@ -34,28 +35,34 @@ use Illuminate\Support\Collection;
  */
 class TargetParser extends Parser
 {
+    protected $target;
+    protected $targetId;
+    protected $nextTargetId;
+
+    public function __construct(Filesystem $filesystem, $filePath, $target)
+    {
+        parent::__construct($filesystem, $filePath);
+
+        $this->target = $target;
+        $this->fileContent = $this->get();
+        $this->targetId = $this->findTargetDefinition();
+        $this->nextTargetId = $this->findNextTargetDefinition();
+    }
+
     /**
      * Add a target
-     *
-     * @param string $target Target
      *
      * @return $this
      *
      * @throws DuplicationErrorException
      */
-    public function addTarget($target)
+    public function addTarget()
     {
-        $fileContent = $this->get();
-
-        $id = $this->findTargetDefinition($fileContent, $target);
-
-        if ($id === false) {
-            $fileContent->push('Target ' . $target, 'new');
+        if ($this->targetId === false) {
+            $this->fileContent->push('Target ' . $this->target, 'new');
         } else {
-            throw new DuplicationErrorException('The target ' . $target . ' already exists');
+            throw new DuplicationErrorException('The target ' . $this->target . ' already exists');
         }
-
-        $this->fileContent = $fileContent;
 
         return $this;
     }
@@ -63,129 +70,99 @@ class TargetParser extends Parser
     /**
      * Delete a target
      *
-     * @param string $target Target
-     *
      * @return $this
      *
      * @throws NotFoundException
      * @throws TargetNotEmptyException
      */
-    public function deleteTarget($target)
+    public function deleteTarget()
     {
-        $fileContent = $this->get();
-
-        $id = $this->findTargetDefinition($fileContent, $target);
-
-        $options = $this->getOptions($target);
+        $options = $this->getOptions();
 
         if ($options === false) {
-            if ($id === false) {
-                throw new NotFoundException('The target ' . $target . ' was not found');
+            if ($this->targetId === false) {
+                throw new NotFoundException('The target ' . $this->target . ' was not found');
             } else {
-                $fileContent->forget($id);
+                $this->fileContent->forget($this->targetId);
             }
-
-            $this->fileContent = $fileContent;
 
             return $this;
         } else {
-            throw new TargetNotEmptyException('The target ' . $target . ' has options defined');
+            throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
         }
     }
 
     /**
      * Add a option to a target
+     * Updates are also supported
      *
-     * @param string $target Target
      * @param string $option Option
      *
      * @return $this
      *
      * @throws NotFoundException
      */
-    public function addOption($target, $option)
+    public function addOption($option)
     {
-        // ToDo: Check for duplicated options (without values)
-
-        $fileContent = $this->get();
-
-        $id = $this->findTargetDefinition($fileContent, $target);
-
-        if ($id === false) {
-            throw new NotFoundException('The target ' . $target . ' was not found');
+        if ($this->targetId === false) {
+            throw new NotFoundException('The target ' . $this->target . ' was not found');
         } else {
-            $target = $fileContent->get($id);
-            $fileContent->put($id, $target . "\n" . $option);
-        }
+            $key = $this->isOptionSet($option);
 
-        $this->fileContent = $fileContent;
+            if ($key === false) {
+                $target = $this->fileContent->get($this->targetId);
+                $this->fileContent->put($this->targetId, $target . "\n" . $option);
+            } else {
+                // Replace existing option with new one
+                $this->fileContent->put($key, $option);
+            }
+        }
 
         return $this;
     }
 
     /**
      * Delete a option
-     * This should not be used to delete a lun
+     * This should not be used to delete a lun or users
      *
-     * @param string  $target     Target
-     * @param string  $option     Option
-     * @param boolean $valueMatch Only delete option if the value also matches
+     * @param string  $option     Option without value
      *
      * @return $this
      *
      * @throws NotFoundException
      */
-    public function deleteOption($target, $option, $valueMatch = true)
+    public function deleteOption($option)
     {
-        $fileContent = $this->get();
-
-        $id = $this->findTargetDefinition($fileContent, $target);
-
-        if ($id === false) {
-            throw new NotFoundException('The target ' . $target . ' was not found');
+        if ($this->targetId === false) {
+            throw new NotFoundException('The target ' . $this->target . ' was not found');
         } else {
-            $options = $this->getOptions($target);
+            $options = $this->getOptions();
 
             if ($options === false) {
-                throw new NotFoundException('The target ' . $target . ' has no options');
+                throw new NotFoundException('The target ' . $this->target . ' has no options');
             } else {
-                if ($valueMatch) {
-                    $id = $fileContent->search($option);
-                } else {
-                    // ToDo: Search partial here, to delete a option with unknown value
-                }
+                $key = $this->isOptionSet($option);
 
-                if ($id === false) {
+                if ($key === false) {
                     throw new NotFoundException('The option ' . $option . ' was not found');
                 } else {
-                    $fileContent->forget($id);
+                    $this->fileContent->forget($key);
+                    return $this;
                 }
             }
         }
-
-        $this->fileContent = $fileContent;
-
-        return $this;
     }
 
     /**
      * Get all options of the target
      *
-     * @param string $target Target
-     *
      * @return bool|\Illuminate\Support\Collection
      */
-    public function getOptions($target)
+    public function getOptions()
     {
-        $fileContent = $this->get();
-
-        $thisTarget = $this->findTargetDefinition($fileContent, $target);
-
-        $nextTarget = $this->findNextTargetDefinition($fileContent, $thisTarget);
-
-        for ($i = $thisTarget + 1; $i < $nextTarget; $i++) {
-            if ($fileContent->has($i)) {
-                $options[$i] = $fileContent->get($i);
+        for ($i = $this->targetId + 1; $i < $this->nextTargetId; $i++) {
+            if ($this->fileContent->has($i)) {
+                $options[$i] = $this->fileContent->get($i);
             }
         }
 
@@ -197,22 +174,71 @@ class TargetParser extends Parser
     }
 
     /**
-     * Find a target definition
+     * Retrieve all or a specific lun
      *
-     * @param Collection $fileContent Collection of the file's content
-     * @param string     $target      Target
+     * @param bool $id
+     *
+     * @return bool|Collection
+     *
+     * @throws NotFoundException
+     */
+    public function getLun($id = false)
+    {
+        for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
+            if ($this->fileContent->has($i)) {
+                if (substr($this->fileContent->get($i), 0, 4) === 'Lun ') {
+                    $lun = explode(' ', $this->fileContent->get($i));
+
+                    $luns[$i]['id'] = $lun[1];
+
+                    $options = explode(',', $lun[2]);
+
+                    foreach ($options as $option) {
+                        $temp = explode('=', $option);
+
+                        $luns[$i][strtolower($temp[0])] = $temp[1];
+                    }
+
+                    if ($id !== false && $id == $lun[1]) {
+                        return collect($luns[$i])->values();
+                    } else if ($id !== false) {
+                        throw new NotFoundException('The lun with the id of ' . $id . ' was not found');
+                    }
+                }
+            }
+        }
+
+        if (empty($luns)) {
+            return false;
+        } else {
+            return collect($luns)->values();
+        }
+    }
+
+    /*public function addLun($path, $type = 'fileio', $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
+    {
+        $fileContent = $this->get();
+
+        $line = [
+            'Lun',
+            ''
+        ];
+    }*/
+
+    /**
+     * Find a target definition
      *
      * @return bool|mixed
      */
-    protected function findTargetDefinition(Collection $fileContent, $target)
+    protected function findTargetDefinition()
     {
-        $id = $this->findFirstTargetDefinition($fileContent);
+        $id = $this->findFirstTargetDefinition($this->fileContent);
 
-        $lastKey = $fileContent->keys()->last();
+        $lastKey = $this->fileContent->keys()->last();
 
         for ($i = $id; $i <= $lastKey; $i++) {
-            if ($fileContent->has($i)) {
-                if ($fileContent->get($i) === 'Target ' . $target) {
+            if ($this->fileContent->has($i)) {
+                if ($this->fileContent->get($i) === 'Target ' . $this->target) {
                     return $i;
                 }
             }
@@ -231,20 +257,17 @@ class TargetParser extends Parser
     /**
      * Find the target definition after the given one
      *
-     * @param Collection $fileContent Collection of the file's content
-     * @param integer    $id          id inside the $fileContent collection
-     *
      * @return bool
      */
-    protected function findNextTargetDefinition(Collection $fileContent, $id)
+    protected function findNextTargetDefinition()
     {
-        $lastKey = $fileContent->keys()->last();
+        $lastKey = $this->fileContent->keys()->last();
 
-        $id++;
+        $id = $this->targetId + 1;
 
         for ($i = $id; $i <= $lastKey; $i++) {
-            if ($fileContent->has($i)) {
-                if (substr($fileContent->get($i), 0, 6) === 'Target') {
+            if ($this->fileContent->has($i)) {
+                if (substr($this->fileContent->get($i), 0, 6) === 'Target') {
                     return $i;
                 }
             }
@@ -257,8 +280,46 @@ class TargetParser extends Parser
         return false;
     }
 
-    protected function isOptionSet($target, $option)
+    /**
+     * Checks if a option is already set
+     *
+     * @param string $option Option
+     *
+     * @return bool|mixed
+     *
+     * @throws NotFoundException
+     */
+    protected function isOptionSet($option)
     {
+        if ($this->targetId === false) {
+            throw new NotFoundException('The target ' . $this->target . ' was not found');
+        } else {
+            $options = $this->getOptions();
 
+            if ($options === false) {
+                throw new NotFoundException('The target ' . $this->target . ' has no options');
+            } else {
+                for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
+                    if ($this->fileContent->has($i)) {
+                        $line = explode(" ", ($this->fileContent->get($i)));
+
+                        if ($line[0] === $option) {
+                            return $i;
+                        }
+                    }
+                }
+
+                return false;
+            }
+        }
     }
+
+    /*protected function getNextFreeLun()
+    {
+        if ($this->nextTargetId === false) {
+            return false;
+        } else {
+
+        }
+    }*/
 }
