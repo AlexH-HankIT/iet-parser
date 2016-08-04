@@ -17,6 +17,7 @@ namespace MrCrankHank\IetParser\Parser;
 use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
+use Illuminate\Support\Collection;
 
 /**
  * Class TargetParser
@@ -124,15 +125,17 @@ class TargetParser extends Parser
 
     /**
      * Delete a option
+     * This should not be used to delete a lun
      *
-     * @param string $target Target
-     * @param string $option Option
+     * @param string  $target     Target
+     * @param string  $option     Option
+     * @param boolean $valueMatch Only delete option if the value also matches
      *
      * @return $this
      *
      * @throws NotFoundException
      */
-    public function deleteOption($target, $option)
+    public function deleteOption($target, $option, $valueMatch = true)
     {
         $fileContent = $this->get();
 
@@ -146,7 +149,11 @@ class TargetParser extends Parser
             if ($options === false) {
                 throw new NotFoundException('The target ' . $target . ' has no options');
             } else {
-                $id = $fileContent->search($option);
+                if ($valueMatch) {
+                    $id = $fileContent->search($option);
+                } else {
+                    // ToDo: Search partial here, to delete a option with unknown value
+                }
 
                 if ($id === false) {
                     throw new NotFoundException('The option ' . $option . ' was not found');
@@ -187,5 +194,71 @@ class TargetParser extends Parser
         } else {
             return collect(array_values($options));
         }
+    }
+
+    /**
+     * Find a target definition
+     *
+     * @param Collection $fileContent Collection of the file's content
+     * @param string     $target      Target
+     *
+     * @return bool|mixed
+     */
+    protected function findTargetDefinition(Collection $fileContent, $target)
+    {
+        $id = $this->findFirstTargetDefinition($fileContent);
+
+        $lastKey = $fileContent->keys()->last();
+
+        for ($i = $id; $i <= $lastKey; $i++) {
+            if ($fileContent->has($i)) {
+                if ($fileContent->get($i) === 'Target ' . $target) {
+                    return $i;
+                }
+            }
+
+            // So here we are, last line
+            // This means we didn't find the index
+            // So let's throw an exception here and go home
+            if ($i === $lastKey) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the target definition after the given one
+     *
+     * @param Collection $fileContent Collection of the file's content
+     * @param integer    $id          id inside the $fileContent collection
+     *
+     * @return bool
+     */
+    protected function findNextTargetDefinition(Collection $fileContent, $id)
+    {
+        $lastKey = $fileContent->keys()->last();
+
+        $id++;
+
+        for ($i = $id; $i <= $lastKey; $i++) {
+            if ($fileContent->has($i)) {
+                if (substr($fileContent->get($i), 0, 6) === 'Target') {
+                    return $i;
+                }
+            }
+
+            if ($i === $lastKey) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    protected function isOptionSet($target, $option)
+    {
+
     }
 }

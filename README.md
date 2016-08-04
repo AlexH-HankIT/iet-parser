@@ -11,11 +11,14 @@
 
 ### ToDo:
 * TargetParser
-    * addTarget
-    * deleteTarget
-    * addOption
-    * deleteOption
-    * getTarget (with options)
+    * getLun($id = false)
+    * deleteLun($id)
+    * addLun($path, $type, $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
+    * getNextFreeLun($target)
+    * addIncomingUser($user, $password)
+    * deleteIncomingUser($user, $password)
+    * addOutgoingUser($user, $password)
+    * deleteOutgoingUser($user, $password)
     
 * AclParser
     * add (add a acl to a new or existing target inside the allow file)
