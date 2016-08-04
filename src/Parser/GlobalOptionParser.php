@@ -73,31 +73,17 @@ class GlobalOptionParser extends Parser
     {
         $fileContent = $this->get();
 
-        $id = $this->findFirstTargetDefinition($fileContent);
+        $id = $this->findGlobalOption($fileContent, $option);
 
-        // decrement id
-        // so we get the last global line
-        $id--;
+        if ($id === false) {
+            throw new NotFoundException('The option ' . $option . ' was not found');
+        } else {
+            $fileContent->forget($id);
 
-        for ($i = 0; $i <= $id; $i++) {
-            if ($fileContent->has($i)) {
-                if ($fileContent->get($i) === $option) {
-                    $fileContent->forget($i);
-                    break;
-                }
-            }
+            $this->fileContent = $fileContent;
 
-            // So here we are, last line
-            // This means we didn't find the index
-            // So let's throw an exception here and go home
-            if ($i === $id) {
-                throw new NotFoundException('The option ' . $option . ' was not found');
-            }
+            return $this;
         }
-
-        $this->fileContent = $fileContent;
-
-        return $this;
     }
 
     /**

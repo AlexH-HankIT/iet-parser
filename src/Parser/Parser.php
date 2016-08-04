@@ -16,6 +16,7 @@ namespace MrCrankHank\IetParser\Parser;
 
 use League\Flysystem\Filesystem;
 use Illuminate\Support\Collection;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
 
 /**
  * Class Parser
@@ -186,16 +187,39 @@ class Parser
     }
 
     /**
-     * Find a specifiy global option
+     * Find a specific global option
      *
      * @param Collection $fileContent Collection of the file's content
      * @param string     $option      Option to be found
+     *
+     * @throws NotFoundException
      *
      * @return mixed
      */
     protected function findGlobalOption(Collection $fileContent, $option)
     {
-        return $fileContent->search($option);
+        $id = $this->findFirstTargetDefinition($fileContent);
+
+        // decrement id
+        // so we get the last global line
+        $id--;
+
+        for ($i = 0; $i <= $id; $i++) {
+            if ($fileContent->has($i)) {
+                if ($fileContent->get($i) === $option) {
+                    return $i;
+                }
+            }
+
+            // So here we are, last line
+            // This means we didn't find the index
+            // So let's throw an exception here and go home
+            if ($i === $id) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -214,5 +238,66 @@ class Parser
         });
 
         return $fileContent->search($firstTarget, true);
+    }
+
+    /**
+     * Find a target definition
+     *
+     * @param Collection $fileContent Collection of the file's content
+     * @param string     $target      Target
+     *
+     * @return bool|mixed
+     */
+    protected function findTargetDefinition(Collection $fileContent, $target)
+    {
+        $id = $this->findFirstTargetDefinition($fileContent);
+
+        $lastKey = $fileContent->keys()->last();
+
+        for ($i = $id; $i <= $lastKey; $i++) {
+            if ($fileContent->has($i)) {
+                if ($fileContent->get($i) === 'Target ' . $target) {
+                    return $i;
+                }
+            }
+
+            // So here we are, last line
+            // This means we didn't find the index
+            // So let's throw an exception here and go home
+            if ($i === $lastKey) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the target definition after the given one
+     *
+     * @param Collection $fileContent Collection of the file's content
+     * @param integer    $id          id inside the $fileContent collection
+     *
+     * @return bool
+     */
+    protected function findNextTargetDefinition(Collection $fileContent, $id)
+    {
+        $lastKey = $fileContent->keys()->last();
+
+        $id++;
+
+        for ($i = $id; $i <= $lastKey; $i++) {
+            if ($fileContent->has($i)) {
+                if (substr($fileContent->get($i), 0, 6) === 'Target') {
+                    return $i;
+                }
+            }
+
+            if ($i === $lastKey) {
+                return false;
+            }
+        }
+
+        return false;
     }
 }
