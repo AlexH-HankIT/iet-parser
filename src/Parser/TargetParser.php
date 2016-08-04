@@ -35,8 +35,25 @@ use League\Flysystem\Filesystem;
  */
 class TargetParser extends Parser
 {
+    /**
+     * Target name
+     *
+     * @var
+     */
     protected $target;
+
+    /**
+     * Line of target inside in the $this->fileContent collection
+     *
+     * @var bool|mixed
+     */
     protected $targetId;
+
+    /**
+     * Line of the next target in the $this->fileContent collection
+     *
+     * @var bool
+     */
     protected $nextTargetId;
 
     public function __construct(Filesystem $filesystem, $filePath, $target)
@@ -215,15 +232,75 @@ class TargetParser extends Parser
         }
     }
 
-    /*public function addLun($path, $type = 'fileio', $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
+    /**
+     * Add a lun to the target.
+     * ID incrementation is supported.
+     *
+     * @param $path
+     * @param string        $type      fileio|blockio|nullio
+     * @param string|null   $scsiId    scsi_id
+     * @param string|null   $scsiSN    scsi_sn
+     * @param string|null   $ioMode    wb|ro|wt
+     * @param string|null   $blockSize size
+     */
+    public function addLun($path, $type = 'fileio', $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
-        $fileContent = $this->get();
+        $type = 'Type=' . $type;
 
-        $line = [
-            'Lun',
-            ''
+        $path = 'Path=' . $path;
+
+        if(isset($scsiId)) {
+            $scsiId = 'ScsiId=' . $scsiId;
+        }
+
+        if (isset($scsiSN)) {
+            $scsiSN = 'ScsiSN=' . $scsiSN;
+        }
+
+        if (isset($ioMode)) {
+            $ioMode = 'IOMode=' . $ioMode;
+        }
+
+        if (isset($blockSize)) {
+            $blockSize = 'BlockSize=' . $blockSize;
+        }
+
+        $params = [
+            $path,
+            $type,
+            $scsiId,
+            $scsiSN,
+            $ioMode,
+            $blockSize
         ];
-    }*/
+
+        $this->addOption('Lun ' . $this->getNextFreeLun() . ' ' . implode(',', $params));
+    }
+
+    public function deleteLun($id)
+    {
+
+    }
+
+    public function addOutgoingUser()
+    {
+
+    }
+
+    public function deleteOutgoingUser()
+    {
+
+    }
+
+    public function addIncomingUser()
+    {
+
+    }
+
+    public function deleteIncomingUser()
+    {
+
+    }
 
     /**
      * Find a target definition
@@ -314,12 +391,29 @@ class TargetParser extends Parser
         }
     }
 
-    /*protected function getNextFreeLun()
+    /**
+     * Get the next free lun id
+     *
+     * @return bool|int
+     */
+    protected function getNextFreeLun()
     {
-        if ($this->nextTargetId === false) {
+        if ($this->targetId === false) {
             return false;
         } else {
+            $luns = $this->getLun();
 
+            foreach ($luns as $key => $lun) {
+                if (isset($luns[$key + 1])) {
+                    if ($lun['id'] + 1 !== $luns[$key + 1]) {
+                        return $lun['id'] + 1;
+                    }
+                } else {
+                    return $lun['id'] + 1;
+                }
+            }
+
+            return 0;
         }
-    }*/
+    }
 }
