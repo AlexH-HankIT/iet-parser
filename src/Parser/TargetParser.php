@@ -56,6 +56,19 @@ class TargetParser extends Parser
      */
     protected $nextTargetId;
 
+    /**
+     * Contains the id of the last added lun, if applicable
+     *
+     * @var string
+     */
+    protected $lastAddedLun;
+
+    /**
+     * TargetParser constructor.
+     * @param Filesystem $filesystem
+     * @param string     $filePath
+     * @param            $target
+     */
     public function __construct(Filesystem $filesystem, $filePath, $target)
     {
         parent::__construct($filesystem, $filePath);
@@ -273,7 +286,11 @@ class TargetParser extends Parser
             $params['blocksize'] = 'BlockSize=' . $blockSize;
         }
 
-        $this->addOption('Lun ' . $this->getNextFreeLun() . ' ' . implode(',', $params));
+        $id = $this->getNextFreeLun();
+
+        $this->addOption('Lun ' . $id . ' ' . implode(',', $params));
+
+        $this->lastAddedLun = $id;
 
         return $this;
     }
