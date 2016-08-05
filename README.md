@@ -19,6 +19,7 @@
     * deleteIncomingUser($user, $password)
     * addOutgoingUser($user, $password)
     * deleteOutgoingUser($user, $password)
+    * getLastAddedLun()
     
 * AclParser
     * add (add a acl to a new or existing target inside the allow file)
