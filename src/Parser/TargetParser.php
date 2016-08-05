@@ -140,7 +140,7 @@ class TargetParser extends Parser
 
     /**
      * Delete a option
-     * This should not be used to delete a lun or users
+     * This should not be used to delete a lun
      *
      * @param string  $option     Option without value
      *
@@ -242,64 +242,107 @@ class TargetParser extends Parser
      * @param string|null   $scsiSN    scsi_sn
      * @param string|null   $ioMode    wb|ro|wt
      * @param string|null   $blockSize size
+     *
+     * @throws NotFoundException
+     *
+     * @return $this
      */
     public function addLun($path, $type = 'fileio', $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
-        $type = 'Type=' . $type;
+        if ($this->targetId === false) {
+            throw new NotFoundException('The target ' . $this->target . ' was not found');
+        }
 
-        $path = 'Path=' . $path;
+        $params['type'] = 'Type=' . $type;
+
+        $params['path'] = 'Path=' . $path;
 
         if(isset($scsiId)) {
-            $scsiId = 'ScsiId=' . $scsiId;
+            $params['scsiId'] = 'ScsiId=' . $scsiId;
         }
 
         if (isset($scsiSN)) {
-            $scsiSN = 'ScsiSN=' . $scsiSN;
+            $params['scsiIn'] = 'ScsiSN=' . $scsiSN;
         }
 
         if (isset($ioMode)) {
-            $ioMode = 'IOMode=' . $ioMode;
+            $params['ioMode'] = 'IOMode=' . $ioMode;
         }
 
         if (isset($blockSize)) {
-            $blockSize = 'BlockSize=' . $blockSize;
+            $params['blocksize'] = 'BlockSize=' . $blockSize;
         }
 
-        $params = [
-            $path,
-            $type,
-            $scsiId,
-            $scsiSN,
-            $ioMode,
-            $blockSize
-        ];
-
         $this->addOption('Lun ' . $this->getNextFreeLun() . ' ' . implode(',', $params));
+
+        return $this;
     }
 
+    /**
+     * Delete lun from a target
+     *
+     * @param int $id id of the lun
+     *
+     * @return $this
+     */
     public function deleteLun($id)
     {
+        // this will throw a NotFoundException, if the lun does not exist
+        $this->getLun($id);
 
+        for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
+            if ($this->fileContent->has($i)) {
+                if (substr($this->fileContent->get($i), 0, 5) === 'Lun ' . $id) {
+                    $this->fileContent->forget($i);
+                }
+            }
+        }
+
+        return $this;
     }
 
-    public function addOutgoingUser()
+    /**
+     * Add a outgoing user to a target
+     *
+     * @param string $user     User
+     * @param string $password Password
+     */
+    public function addOutgoingUser($user, $password)
     {
-
+        $this->addOption('OutgoingUser ' . $user . ' ' . $password);
     }
 
-    public function deleteOutgoingUser()
+    /**
+     * Delete outgoing user from a target
+     *
+     * @param string $user     User
+     * @param string $password Password
+     */
+    public function deleteOutgoingUser($user, $password)
     {
-
+        $this->deleteOption('OutgoingUser ' . $user . ' ' . $password);
     }
 
-    public function addIncomingUser()
+    /**
+     * Add a incoming user to atarget
+     *
+     * @param string $user     User
+     * @param string $password Password
+     */
+    public function addIncomingUser($user, $password)
     {
-
+        $this->addOption('Incoming ' . $user . ' ' . $password);
     }
 
-    public function deleteIncomingUser()
+    /**
+     * Delete incoming user from a target
+     *
+     * @param string $user     User
+     * @param string $password Password
+     */
+    public function deleteIncomingUser($user, $password)
     {
-
+        $this->deleteOption('Incoming ' . $user . ' ' . $password);
     }
 
     /**
