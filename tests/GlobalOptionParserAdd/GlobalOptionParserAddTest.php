@@ -15,46 +15,28 @@ use PHPUnit_Framework_TestCase;
  * @package MrCrankHank\IetParser\tests
  */
 class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
+    protected $sampleFile = 'iet.sample.conf';
+    protected $testFile = 'iet.test-running.conf';
+    protected $dirs = ['case1_files', 'case2_files'];
+
     /**
      * Test if I can add a parameter to the file
      */
     public function testAdd() {
-        $dirs = ['case1_files', 'case2_files'];
+        $file = 'iet.expected.testAdd.conf';
 
-        foreach ($dirs as $dir) {
-            // Create new filesystem adapter
-            $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . $dir, LOCK_EX);
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            // create new filesystem
-            $filesystem = new Filesystem($local);
+            $objects = $this->normalize($dir);
 
-            // for testing purposes: copy the sample file. So we don't change the real data
-            $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
-
-            // create parser instance
-            $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
-
-            // create normalizer instance
-            $normalizer = new Normalizer($parser);
-
-            // normalize the file
-            $normalizer->write();
-
-            if ($normalizer->check()) {
-                $parser->add("IncomingUser user password")->write();
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->add("IncomingUser user password")->write();
             } else {
                 $this->fail("The normalizer did not properly normalize the file!");
             }
 
-            $contentAfterWrite = $filesystem->read('iet.test-running.conf');
-            $expectedContent = $filesystem->read('iet.expected.testAdd.conf');
-
-            $filesystem->delete('iet.test-running.conf');
-
-            // Only needed on windows when line ending is CRLF instead of LF
-            //$this->assertEquals(preg_split('/\r\n|\r|\n/', $expectedContent), preg_split('/\r\n|\r|\n/', $contentAfterWrite));
-            
-            $this->assertEquals($contentAfterWrite, $expectedContent);
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
         }
     }
 
@@ -62,36 +44,22 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      * Test if the duplication check is working
      */
     public function testDuplicationError() {
-        // Create new filesystem adapter
-        $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . 'case1_files', LOCK_EX);
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-        // create new filesystem
-        $filesystem = new Filesystem($local);
+            $objects = $this->normalize($dir);
 
-        // for testing purposes: copy the sample file. So we don't change the real data
-        $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
-
-        // create parser instance
-        $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
-
-        // create normalizer instance
-        $normalizer = new Normalizer($parser);
-
-        // normalize the file
-        $normalizer->write();
-
-        if ($normalizer->check()) {
-            try {
-                $parser->add("IncomingUser user password")->write();
-                $parser->add("IncomingUser user password")->write();
-                $this->fail("Test did not throw DuplicationError exception!");
-            } catch (DuplicationErrorException $e) {
-                $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
-            } finally {
-                $filesystem->delete('iet.test-running.conf');
+            if ($objects['normalizer']->check()) {
+                try {
+                    $objects['parser']->add("IncomingUser user password")->write();
+                    $objects['parser']->add("IncomingUser user password")->write();
+                    $this->fail("Test did not throw DuplicationError exception!");
+                } catch (DuplicationErrorException $e) {
+                    $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
+                }
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
             }
-        } else {
-            $this->fail("The normalizer did not properly normalize the file!");
         }
     }
 
@@ -99,30 +67,16 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      * Test the addOutgoingUser() helper method
      */
     public function testAddOutgoingUserHelperMethod() {
-        $dirs = ['case1_files', 'case2_files'];
+        $file = 'iet.expected.testAddOutgoingUserHelperMethod.conf';
 
-        foreach ($dirs as $dir) {
-            // Create new filesystem adapter
-            $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . $dir, LOCK_EX);
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            // create new filesystem
-            $filesystem = new Filesystem($local);
+            $objects = $this->normalize($dir);
 
-            // for testing purposes: copy the sample file. So we don't change the real data
-            $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
-
-            // create normalizer instance
-            $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
-
-            // create normalizer instance
-            $normalizer = new Normalizer($parser);
-
-            // normalize the file
-            $normalizer->write();
-
-            if ($normalizer->check()) {
+            if ($objects['normalizer']->check()) {
                 try {
-                    $parser->addOutgoingUser("user", "password")->write();
+                    $objects['parser']->addOutgoingUser("user", "password")->write();
                 } catch (DuplicationErrorException $e) {
                     $this->assertEquals($e->getMessage(), 'The option OutgoingUser user password is already set.');
                 }
@@ -130,12 +84,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
                 $this->fail("The normalizer did not properly normalize the file!");
             }
 
-            $contentAfterWrite = $filesystem->read('iet.test-running.conf');
-            $expectedContent = $filesystem->read('iet.expected.testAddOutgoingUserHelperMethod.conf');
-
-            $filesystem->delete('iet.test-running.conf');
-
-            $this->assertEquals($contentAfterWrite, $expectedContent);
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
         }
     }
 
@@ -143,30 +92,16 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      * Test the addIncomingUser() helper method
      */
     public function testAddIncomingUserHelperMethod() {
-        $dirs = ['case1_files', 'case2_files'];
+        $file = 'iet.expected.testAddIncomingUserHelperMethod.conf';
 
-        foreach ($dirs as $dir) {
-            // Create new filesystem adapter
-            $local = new Local(__DIR__ . DIRECTORY_SEPARATOR . $dir, LOCK_EX);
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            // create new filesystem
-            $filesystem = new Filesystem($local);
+            $objects = $this->normalize($dir);
 
-            // for testing purposes: copy the sample file. So we don't change the real data
-            $filesystem->copy('iet.sample.conf', 'iet.test-running.conf');
-
-            // create normalizer instance
-            $parser = new GlobalOptionParser($filesystem, 'iet.test-running.conf');
-
-            // create normalizer instance
-            $normalizer = new Normalizer($parser);
-
-            // normalize the file
-            $normalizer->write();
-
-            if ($normalizer->check()) {
+            if ($objects['normalizer']->check()) {
                 try {
-                    $parser->addIncomingUser("user", "password")->write();
+                    $objects['parser']->addIncomingUser("user", "password")->write();
                 } catch (DuplicationErrorException $e) {
                     $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
                 }
@@ -174,12 +109,45 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
                 $this->fail("The normalizer did not properly normalize the file!");
             }
 
-            $contentAfterWrite = $filesystem->read('iet.test-running.conf');
-            $expectedContent = $filesystem->read('iet.expected.testAddIncomingUserHelperMethod.conf');
-
-            $filesystem->delete('iet.test-running.conf');
-
-            $this->assertEquals($contentAfterWrite, $expectedContent);
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
         }
+    }
+
+    public function tearDown() {
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $file = $dir . DIRECTORY_SEPARATOR . $this->testFile;
+
+            if (file_exists($file)) {
+                unlink($file);
+            }
+        }
+    }
+
+    private function normalize($dir) {
+        // Create new filesystem adapter
+        $local = new Local($dir, LOCK_EX);
+
+        // create new filesystem
+        $filesystem = new Filesystem($local);
+
+        // for testing purposes: copy the sample file. So we don't change the real data
+        $filesystem->copy($this->sampleFile, $this->testFile);
+
+        // create parser instance
+        $parser = new GlobalOptionParser($filesystem, $this->testFile);
+
+        // create normalizer instance
+        $normalizer = new Normalizer($parser);
+
+        // normalize the file
+        $normalizer->write();
+
+        return [
+            'normalizer' => $normalizer,
+            'parser' => $parser,
+            'filesystem' => $filesystem
+        ];
     }
 }

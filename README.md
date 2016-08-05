@@ -24,7 +24,7 @@
 * AclParser
     * add (add a acl to a new or existing target inside the allow file)
     * delete (+ delete target definition if acl is last)
-    * get (+ param for single one)
+    * get
     
 * ProcParser
     * getSession (+ param for single one)
