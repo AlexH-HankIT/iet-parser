@@ -50,6 +50,59 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testDeleteTarget()
+    {
+        $file = 'iet.expected.testDeleteTarget.conf';
+
+        foreach($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:delete');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->deleteTarget()->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
+        }
+    }
+
+    public function testDeleteTargetNotFoundException() {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
+
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:notFound');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->deleteTarget()->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+
+            }
+        }
+    }
+
+    public function testDeleteTargetNotEmptyException()
+    {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\TargetNotEmptyException');
+
+        foreach ($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->deleteTarget()->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+        }
+    }
+
     public function tearDown() {
         foreach ($this->dirs as $dir) {
             $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
@@ -72,16 +125,14 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         // for testing purposes: copy the sample file. So we don't change the real data
         $filesystem->copy($this->sampleFile, $this->testFile);
 
-        // create parser instance
-        $parser = new TargetParser($filesystem, $this->testFile, $target);
-
         // create normalizer instance
-        $normalizer = new Normalizer($parser);
+        $normalizer = new Normalizer($filesystem, $this->testFile);
 
         // normalize the file
         $normalizer->write();
 
-        $parser->refresh();
+        // create parser instance
+        $parser = new TargetParser($filesystem, $this->testFile, $target);
 
         return [
             'normalizer' => $normalizer,

@@ -24,26 +24,8 @@ namespace MrCrankHank\IetParser\Parser;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class Normalizer
+class Normalizer extends Parser
 {
-    /**
-     * The parser instance which will
-     * be used for normalization
-     *
-     * @var Parser
-     */
-    protected $parser;
-
-    /**
-     * Normalize constructor.
-     *
-     * @param Parser $parser Parser instance
-     */
-    public function __construct(Parser $parser)
-    {
-        $this->parser = $parser;
-    }
-
     /**
      * Normalize a ietd file
      *
@@ -58,7 +40,7 @@ class Normalizer
      */
     protected function normalize()
     {
-        $originalFileContent = $this->parser->getRaw();
+        $originalFileContent = $this->getRaw();
 
         // remove spaces and the ending/beginning
         $fileContent = $originalFileContent->map(function ($line, $key) {
@@ -112,7 +94,7 @@ class Normalizer
      */
     public function write()
     {
-        $this->parser->writeRaw($this->normalize()['fileContentString']);
+        $this->writeRaw($this->normalize()['fileContentString']);
     }
 
     /**

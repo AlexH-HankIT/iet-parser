@@ -135,14 +135,14 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
         // for testing purposes: copy the sample file. So we don't change the real data
         $filesystem->copy($this->sampleFile, $this->testFile);
 
-        // create parser instance
-        $parser = new GlobalOptionParser($filesystem, $this->testFile);
-
         // create normalizer instance
-        $normalizer = new Normalizer($parser);
+        $normalizer = new Normalizer($filesystem, $this->testFile);
 
         // normalize the file
         $normalizer->write();
+
+        // create parser instance
+        $parser = new GlobalOptionParser($filesystem, $this->testFile);
 
         return [
             'normalizer' => $normalizer,

@@ -105,21 +105,20 @@ class TargetParser extends Parser
      * @throws NotFoundException
      * @throws TargetNotEmptyException
      */
-    public function deleteTarget()
-    {
-        $options = $this->getOptions();
-
-        if ($options === false) {
-            if ($this->targetId === false) {
-                throw new NotFoundException('The target ' . $this->target . ' was not found');
-            } else {
-                $this->fileContent->forget($this->targetId);
-            }
-
-            return $this;
+    public function deleteTarget() {
+        if ($this->targetId === false) {
+            throw new NotFoundException('The target ' . $this->target . ' was not found');
         } else {
-            throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
+            $options = $this->getOptions();
+
+            if ($options === false) {
+                $this->fileContent->forget($this->targetId);
+            } else {
+                throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
+            }
         }
+
+        return $this;
     }
 
     /**
@@ -190,7 +189,13 @@ class TargetParser extends Parser
      */
     public function getOptions()
     {
-        for ($i = $this->targetId + 1; $i < $this->nextTargetId; $i++) {
+        if ($this->targetId + 1 === $this->nextTargetId) {
+            // If there is another target definition in the next
+            // line, then we have no reason to look for options
+            return false;
+        }
+
+        for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
                 $options[$i] = $this->fileContent->get($i);
             }
