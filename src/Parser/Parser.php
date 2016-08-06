@@ -154,6 +154,15 @@ class Parser
     }
 
     /**
+     * Reread the files content
+     *
+     * @return void
+     */
+    public function refresh() {
+        $this->fileContent = $this->get();
+    }
+
+    /**
      * Extract comments from the file
      *
      * @param Collection $fileContent Collection of the file's content
@@ -239,5 +248,4 @@ class Parser
 
         return $fileContent->search($firstTarget, true);
     }
-
 }
