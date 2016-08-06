@@ -6,21 +6,13 @@
 ### PHP sniffer
 * phpcs src --standard=ruleset.xml -s
 
+### PHPUnit
+* Single test: phpunit --filter "/::testDeleteOption$/" .\tests\TargetParserAdd
+
 ### Links
 * https://manpages.debian.org/cgi-bin/man.cgi?sektion=5&query=ietd.conf&apropos=0&manpath=sid&locale=en
 
-### ToDo:
-* TargetParser
-    * getLun($id = false)
-    * deleteLun($id)
-    * addLun($path, $type, $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
-    * getNextFreeLun($target)
-    * addIncomingUser($user, $password)
-    * deleteIncomingUser($user, $password)
-    * addOutgoingUser($user, $password)
-    * deleteOutgoingUser($user, $password)
-    * getLastAddedLun()
-    
+### ToDo: 
 * AclParser
     * add (add a acl to a new or existing target inside the allow file)
     * delete (+ delete target definition if acl is last)
