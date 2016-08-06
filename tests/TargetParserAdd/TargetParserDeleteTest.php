@@ -69,7 +69,8 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testDeleteTargetNotFoundException() {
+    public function testDeleteTargetNotFoundException()
+    {
         $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
 
         foreach ($this->dirs as $dir) {
@@ -103,7 +104,82 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function tearDown() {
+    public function testAddOption()
+    {
+        $file = 'iet.expected.testAddOption.conf';
+
+        foreach($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->addOption('This is a awesome option')->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
+        }
+    }
+
+    public function testAddOptionUpdate()
+    {
+        $file = 'iet.expected.testAddOptionUpdate.conf';
+
+        foreach($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server17');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->addOption('ImmediateData No')->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
+        }
+    }
+
+    public function testAddOptionNotFoundException()
+    {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
+
+        foreach($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:notFound');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->addOption('This is a awesome option')->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+        }
+    }
+
+    public function testDeleteOption()
+    {
+        $file = 'iet.expected.testDeleteOption.conf';
+
+        foreach($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:ex');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->deleteOption('MaxBurstLength')->write();
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
+        }
+    }
+
+    public function tearDown()
+    {
         foreach ($this->dirs as $dir) {
             $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
@@ -115,7 +191,8 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         }
     }
 
-    private function normalize($dir, $target) {
+    private function normalize($dir, $target)
+    {
         // Create new filesystem adapter
         $local = new Local($dir, LOCK_EX);
 

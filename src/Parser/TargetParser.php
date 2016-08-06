@@ -152,7 +152,8 @@ class TargetParser extends Parser
 
     /**
      * Delete a option
-     * This should not be used to delete a lun
+     * This should not be used to delete a lun.
+     * This function also works, if the value is unknown
      *
      * @param string  $option     Option without value
      *
@@ -423,7 +424,8 @@ class TargetParser extends Parser
     }
 
     /**
-     * Checks if a option is already set
+     * Checks if a option is already set.
+     * Ignores the value and only checks the key.
      *
      * @param string $option Option
      *
@@ -445,7 +447,9 @@ class TargetParser extends Parser
                     if ($this->fileContent->has($i)) {
                         $line = explode(" ", ($this->fileContent->get($i)));
 
-                        if ($line[0] === $option) {
+                        // If the lines contains the option
+                        // we know that the value is already set
+                        if (strpos($option, $line[0]) !== false) {
                             return $i;
                         }
                     }
