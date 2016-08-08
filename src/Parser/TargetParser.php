@@ -474,8 +474,9 @@ class TargetParser extends Parser
 
             foreach ($luns as $key => $lun) {
                 if (isset($luns[$key + 1])) {
+                    var_dump("dings");
                     if ($lun['id'] + 1 !== $luns[$key + 1]) {
-                        return $lun['id'] + 1;
+                        return $lun['id'] + 2;
                     }
                 } else {
                     return $lun['id'] + 1;
