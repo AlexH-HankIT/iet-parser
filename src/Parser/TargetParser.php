@@ -186,6 +186,8 @@ class TargetParser extends Parser
     /**
      * Get all options of the target
      *
+     * ToDo: Add param for ignoring luns
+     *
      * @return bool|\Illuminate\Support\Collection
      */
     public function getOptions()
@@ -214,7 +216,7 @@ class TargetParser extends Parser
      *
      * @param bool $id
      *
-     * @return bool|Collection
+     * @return Collection
      *
      * @throws NotFoundException
      */
@@ -236,16 +238,14 @@ class TargetParser extends Parser
                     }
 
                     if ($id !== false && $id == $lun[1]) {
-                        return collect($luns[$i])->values();
-                    } else if ($id !== false) {
-                        throw new NotFoundException('The lun with the id of ' . $id . ' was not found');
+                        return collect($luns[$i]);
                     }
                 }
             }
         }
 
         if (empty($luns)) {
-            return false;
+            throw new NotFoundException('The lun with the id of ' . $id . ' was not found');
         } else {
             return collect($luns)->values();
         }
