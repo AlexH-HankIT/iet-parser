@@ -196,7 +196,7 @@ class TargetParser extends Parser
             return false;
         }
 
-        for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
+        for ($i = $this->targetId + 1; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
                 $options[$i] = $this->fileContent->get($i);
             }
