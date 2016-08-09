@@ -83,9 +83,9 @@ class Parser
      *
      * @return Collection
      */
-    public function get()
+    public function read()
     {
-        $fileContent = $this->getRaw();
+        $fileContent = $this->readRaw();
 
         $fileContent = $this->_handleComments($fileContent);
 
@@ -97,7 +97,7 @@ class Parser
      *
      * @return string
      */
-    public function getRaw()
+    public function readRaw()
     {
         $fileContent = $this->filesystem->read($this->filePath);
 
@@ -159,7 +159,7 @@ class Parser
      * @return void
      */
     public function refresh() {
-        $this->fileContent = $this->get();
+        $this->fileContent = $this->read();
     }
 
     /**

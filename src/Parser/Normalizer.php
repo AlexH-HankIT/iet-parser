@@ -40,7 +40,7 @@ class Normalizer extends Parser
      */
     protected function normalize()
     {
-        $originalFileContent = $this->getRaw();
+        $originalFileContent = $this->readRaw();
 
         // remove spaces and the ending/beginning
         $fileContent = $originalFileContent->map(function ($line, $key) {

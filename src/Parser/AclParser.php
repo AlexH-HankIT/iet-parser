@@ -33,21 +33,26 @@ class AclParser extends Parser
 {
     protected $target;
 
-    public function __construct(Filesystem $filesystem, $filePath, $target) {
+    public function __construct(Filesystem $filesystem, $filePath, $target)
+    {
         parent::__construct($filesystem, $filePath);
 
         $this->target = $target;
+        $this->fileContent = $this->read();
     }
 
-    public function add() {
+    public function add()
+    {
 
     }
 
-    public function delete() {
+    public function delete()
+    {
 
     }
 
-    public function get() {
-
+    public function get()
+    {
+        dd($this->fileContent);
     }
 }

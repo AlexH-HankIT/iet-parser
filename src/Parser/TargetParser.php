@@ -74,7 +74,7 @@ class TargetParser extends Parser
         parent::__construct($filesystem, $filePath);
 
         $this->target = $target;
-        $this->fileContent = $this->get();
+        $this->fileContent = $this->read();
         $this->targetId = $this->findTargetDefinition();
         $this->nextTargetId = $this->findNextTargetDefinition();
     }

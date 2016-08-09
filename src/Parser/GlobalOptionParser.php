@@ -42,7 +42,7 @@ class GlobalOptionParser extends Parser
      */
     public function add($option)
     {
-        $fileContent = $this->get();
+        $fileContent = $this->read();
 
         $id = $this->findGlobalOption($fileContent, $option);
 
@@ -71,7 +71,7 @@ class GlobalOptionParser extends Parser
      */
     public function delete($option)
     {
-        $fileContent = $this->get();
+        $fileContent = $this->read();
 
         $id = $this->findGlobalOption($fileContent, $option);
 
