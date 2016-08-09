@@ -105,17 +105,16 @@ class TargetParser extends Parser
      * @throws NotFoundException
      * @throws TargetNotEmptyException
      */
-    public function deleteTarget() {
-        if ($this->targetId === false) {
-            throw new NotFoundException('The target ' . $this->target . ' was not found');
-        } else {
-            $options = $this->getOptions();
+    public function deleteTarget()
+    {
+        $this->_existsOrDie();
 
-            if ($options === false) {
-                $this->fileContent->forget($this->targetId);
-            } else {
-                throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
-            }
+        $options = $this->getOptions();
+
+        if ($options === false) {
+            $this->fileContent->forget($this->targetId);
+        } else {
+            throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
         }
 
         return $this;
@@ -133,18 +132,16 @@ class TargetParser extends Parser
      */
     public function addOption($option)
     {
-        if ($this->targetId === false) {
-            throw new NotFoundException('The target ' . $this->target . ' was not found');
-        } else {
-            $key = $this->isOptionSet($option);
+        $this->_existsOrDie();
 
-            if ($key === false) {
-                $target = $this->fileContent->get($this->targetId);
-                $this->fileContent->put($this->targetId, $target . "\n" . $option);
-            } else {
-                // Replace existing option with new one
-                $this->fileContent->put($key, $option);
-            }
+        $key = $this->isOptionSet($option);
+
+        if ($key === false) {
+            $target = $this->fileContent->get($this->targetId);
+            $this->fileContent->put($this->targetId, $target . "\n" . $option);
+        } else {
+            // Replace existing option with new one
+            $this->fileContent->put($key, $option);
         }
 
         return $this;
@@ -163,22 +160,20 @@ class TargetParser extends Parser
      */
     public function deleteOption($option)
     {
-        if ($this->targetId === false) {
-            throw new NotFoundException('The target ' . $this->target . ' was not found');
+        $this->_existsOrDie();
+
+        $options = $this->getOptions();
+
+        if ($options === false) {
+            throw new NotFoundException('The target ' . $this->target . ' has no options');
         } else {
-            $options = $this->getOptions();
+            $key = $this->isOptionSet($option);
 
-            if ($options === false) {
-                throw new NotFoundException('The target ' . $this->target . ' has no options');
+            if ($key === false) {
+                throw new NotFoundException('The option ' . $option . ' was not found');
             } else {
-                $key = $this->isOptionSet($option);
-
-                if ($key === false) {
-                    throw new NotFoundException('The option ' . $option . ' was not found');
-                } else {
-                    $this->fileContent->forget($key);
-                    return $this;
-                }
+                $this->fileContent->forget($key);
+                return $this;
             }
         }
     }
@@ -268,9 +263,7 @@ class TargetParser extends Parser
      */
     public function addLun($path, $type = 'fileio', $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
-        if ($this->targetId === false) {
-            throw new NotFoundException('The target ' . $this->target . ' was not found');
-        }
+        $this->_existsOrDie();
 
         $params['type'] = 'Type=' . $type;
 
@@ -435,18 +428,23 @@ class TargetParser extends Parser
      */
     protected function isOptionSet($option)
     {
-        if ($this->targetId === false) {
-            throw new NotFoundException('The target ' . $this->target . ' was not found');
+        $this->_existsOrDie();
+
+        $options = $this->getOptions();
+
+        if ($options === false) {
+            throw new NotFoundException('The target ' . $this->target . ' has no options');
         } else {
-            $options = $this->getOptions();
+            for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
+                if ($this->fileContent->has($i)) {
+                    $line = explode(" ", ($this->fileContent->get($i)));
 
-            if ($options === false) {
-                throw new NotFoundException('The target ' . $this->target . ' has no options');
-            } else {
-                for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
-                    if ($this->fileContent->has($i)) {
-                        $line = explode(" ", ($this->fileContent->get($i)));
-
+                    // Workaround, to detect luns correctly
+                    if ($line[0] === 'Lun') {
+                        if (strpos($option, $line[0] . ' ' . $line[1]) !== false) {
+                            return $i;
+                        }
+                    } else {
                         // If the lines contains the option
                         // we know that the value is already set
                         if (strpos($option, $line[0]) !== false) {
@@ -454,9 +452,9 @@ class TargetParser extends Parser
                         }
                     }
                 }
-
-                return false;
             }
+
+            return false;
         }
     }
 
@@ -474,7 +472,6 @@ class TargetParser extends Parser
 
             foreach ($luns as $key => $lun) {
                 if (isset($luns[$key + 1])) {
-                    var_dump("dings");
                     if ($lun['id'] + 1 !== $luns[$key + 1]) {
                         return $lun['id'] + 2;
                     }
@@ -484,6 +481,20 @@ class TargetParser extends Parser
             }
 
             return 0;
+        }
+    }
+
+    /**
+     * Throw an exception if the target does not exist
+     *
+     * @throws NotFoundException
+     *
+     * @return void
+     */
+    private function _existsOrDie()
+    {
+        if ($this->targetId === false) {
+            throw new NotFoundException('The target ' . $this->target . ' was not found');
         }
     }
 }
