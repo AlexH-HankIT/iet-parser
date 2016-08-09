@@ -271,6 +271,27 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testDeleteLun()
+    {
+        $file = 'iet.expected.testDeleteLun.conf';
+
+        foreach($this->dirs as $dir) {
+            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
+
+            if ($objects['normalizer']->check()) {
+                $objects['parser']->deleteLun(0)->write();
+
+
+            } else {
+                $this->fail("The normalizer did not properly normalize the file!");
+            }
+
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
+        }
+    }
+
     public function tearDown()
     {
         foreach ($this->dirs as $dir) {
