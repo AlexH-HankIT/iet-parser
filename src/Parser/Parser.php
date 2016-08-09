@@ -67,15 +67,25 @@ class Parser
     protected $originalContent;
 
     /**
+     * Contains the iqn
+     *
+     * @var
+     */
+    protected $target;
+
+    /**
      * Parser constructor.
      *
      * @param Filesystem $filesystem Filesystem instance
      * @param string     $filePath   Path to the file
+     * @param string     $target     IQN
      */
-    public function __construct(Filesystem $filesystem, $filePath)
+    public function __construct(Filesystem $filesystem, $filePath, $target = null)
     {
         $this->filesystem = $filesystem;
         $this->filePath = $filePath;
+        $this->target = $target;
+        $this->fileContent = $this->read();
     }
 
     /**

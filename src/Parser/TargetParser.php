@@ -36,13 +36,6 @@ use League\Flysystem\Filesystem;
 class TargetParser extends Parser
 {
     /**
-     * Target name
-     *
-     * @var
-     */
-    protected $target;
-
-    /**
      * Line of target inside in the $this->fileContent collection
      *
      * @var bool|mixed
@@ -67,14 +60,12 @@ class TargetParser extends Parser
      * TargetParser constructor.
      * @param Filesystem $filesystem
      * @param string     $filePath
-     * @param            $target
+     * @param string     $target
      */
-    public function __construct(Filesystem $filesystem, $filePath, $target)
+    public function __construct(Filesystem $filesystem, $filePath, $target = null)
     {
-        parent::__construct($filesystem, $filePath);
+        parent::__construct($filesystem, $filePath, $target);
 
-        $this->target = $target;
-        $this->fileContent = $this->read();
         $this->targetId = $this->findTargetDefinition();
         $this->nextTargetId = $this->findNextTargetDefinition();
     }
