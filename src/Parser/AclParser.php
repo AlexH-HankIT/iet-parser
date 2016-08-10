@@ -51,7 +51,6 @@ class AclParser extends Parser
         }
     }
 
-
     private function _getAll()
     {
         foreach($this->fileContent as $key => $line) {
