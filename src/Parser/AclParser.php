@@ -32,14 +32,33 @@ use MrCrankHank\IetParser\Exceptions\ParserErrorException;
  */
 class AclParser extends Parser
 {
+    public function __construct(Filesystem $filesystem, $filePath, $target)
+    {
+        parent::__construct($filesystem, $filePath, $target);
+
+        // move $targetId to parent class
+        // and fill it with $this->findiqn
+    }
+
     public function add()
     {
 
     }
 
-    public function delete()
+    public function delete($delete)
     {
+        // throw exception if iqn is null or stuff like that
 
+        // get all acl for $this->iqn
+        $acl = $this->_getSingle();
+
+
+
+        // remove $delete from $acl
+        // if not found throw exception
+        // rebuild line by imploding it by ", " and prepend $this->target
+        // write line in $this->filecontent
+        // done
     }
 
     public function get($all = false)
