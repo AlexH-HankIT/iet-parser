@@ -15,6 +15,8 @@
 namespace MrCrankHank\IetParser\Parser;
 
 use League\Flysystem\Filesystem;
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Exceptions\ParserErrorException;
 
 /**
@@ -36,29 +38,65 @@ class AclParser extends Parser
     {
         parent::__construct($filesystem, $filePath, $target);
 
-        // move $targetId to parent class
-        // and fill it with $this->findiqn
+        $this->targetId = $this->_findIqn();
     }
 
-    public function add()
+    public function add($add)
     {
+        // get all acl for $this->iqn
+        $acl = $this->get();
 
+        if ($acl->isEmpty()) {
+            $this->fileContent->push($this->target . ' ' . $add);
+        } else {
+            $key = $acl->search($add);
+
+            if ($key === false) {
+                $acl->push($add);
+
+                $line = $this->target . ' ' . $acl->implode(', ');
+
+                $this->fileContent->put($this->targetId, $line);
+            } else {
+                throw new DuplicationErrorException('The acl ' . $add . ' was already added');
+            }
+        }
+
+        return $this;
     }
 
     public function delete($delete)
     {
-        // throw exception if iqn is null or stuff like that
+        if ($this->fileContent->isEmpty()) {
+            throw new ParserErrorException('The file is empty');
+        }
 
         // get all acl for $this->iqn
-        $acl = $this->_getSingle();
+        $acl = $this->get();
 
+        if ($acl->isEmpty()) {
+            throw new NotFoundException('The acl ' . $delete . ' was not found on target ' . $this->target);
+        }
 
+        $key = $acl->search($delete);
 
-        // remove $delete from $acl
-        // if not found throw exception
-        // rebuild line by imploding it by ", " and prepend $this->target
-        // write line in $this->filecontent
-        // done
+        if ($key === false) {
+            throw new NotFoundException('The acl ' . $delete . ' was not found on target ' . $this->target);
+        }
+
+        // Remove the acl
+        $acl->forget($key);
+
+        // When the target has no acl left
+        // we delete the whole line
+        if ($acl->isEmpty()) {
+            $this->fileContent->forget($this->targetId);
+        } else {
+            $line = $this->target . ' ' . $acl->implode(', ');
+            $this->fileContent->put($this->targetId, $line);
+        }
+
+        return $this;
     }
 
     public function get($all = false)
@@ -101,7 +139,7 @@ class AclParser extends Parser
 
     private function _getSingle()
     {
-        $line = $this->_findIqn();
+        $line = $this->fileContent->get($this->targetId);
 
         // explode array by comma we get everything
         // here except the first acl because
@@ -115,12 +153,12 @@ class AclParser extends Parser
         // remove index with iqn
         unset($acls[0]);
 
-        if (empty($acls->all())) {
-            throw new ParserErrorException('The target ' . $this->target . ' has no acls');
-        }
-
         // prepend the extract acl to the collection
         $acls->prepend($acl[1]);
+
+        if ($acls->isEmpty()) {
+            throw new ParserErrorException('The target ' . $this->target . ' has no acls');
+        }
 
         // trim spaces
         $acls = $acls->map(function($item, $key) {
@@ -132,10 +170,10 @@ class AclParser extends Parser
 
     private function _findIqn()
     {
-        return $this->fileContent->first(function($key, $value) {
-            if (strpos($value, $this->target) !== false) {
-                return true;
-            }
-        });
+       return $this->fileContent->search(function($item, $key) {
+           if (strpos($item, $this->target) !== false) {
+               return true;
+           }
+       });
     }
 }

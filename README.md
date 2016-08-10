@@ -12,12 +12,7 @@
 ### Links
 * https://manpages.debian.org/cgi-bin/man.cgi?sektion=5&query=ietd.conf&apropos=0&manpath=sid&locale=en
 
-### ToDo: 
-* AclParser
-    * add (add a acl to a new or existing target inside the allow file)
-    * delete (+ delete target definition if acl is last)
-    * get
-    
+### ToDo:   
 * ProcParser
     * getSession (+ param for single one)
     * getVolumes (+ param for single one)

@@ -62,7 +62,7 @@ EOF;
      */
     public function handle()
     {
-        $local = new Local(__DIR__ . '\..\..\tests\GlobalOptionParserAdd\files', LOCK_EX);
+        $local = new Local(__DIR__ . '\..\..\tests\OptionParserAdd\files', LOCK_EX);
 
         $filesystem = new Filesystem($local);
         if ($filesystem->has('iet.test-running.conf')) {

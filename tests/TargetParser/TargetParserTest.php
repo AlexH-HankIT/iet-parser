@@ -1,334 +1,508 @@
 <?php
 
-namespace MrCrankHank\IetParser\tests;
+namespace MrCrankHank\IetParser\TargetParser;
 
+use MrCrankHank\IetParser\TestTrait;
 use PHPUnit_Framework_TestCase;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
 use MrCrankHank\IetParser\Parser\TargetParser;
-use MrCrankHank\IetParser\Parser\Normalizer;
 
 class TargetParserDelete extends PHPUnit_Framework_TestCase
 {
-    protected $sampleFile = 'iet.sample.conf';
-    protected $testFile = 'iet.test-running.conf';
-    protected $dirs = ['case1_files'];
+    use TestTrait;
 
-    public function testAddTarget()
+    public static function addTargetProvider()
     {
-        $file = 'iet.expected.testAddTarget.conf';
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testAddTarget.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testAddTarget.conf'],
+        ];
+    }
 
-        foreach($this->dirs as $dir) {
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedFile
+     *
+     * @dataProvider addTargetProvider
+     */
+    public function testAddTarget($dir, $sourceFile, $expectedFile)
+    {
             $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:testAdd');
+            $objects = $this->normalize($dir, $sourceFile);
+
+            $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:testAdd');
 
             if ($objects['normalizer']->check()) {
-                $objects['parser']->addTarget()->write();
+                $parser->addTarget()->write();
             } else {
                 $this->fail("The normalizer did not properly normalize the file!");
             }
 
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
-        }
+            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 
-    public function testAddTargetDuplicationError()
+    public static function addTargetDuplicationErrorProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf'],
+            ['case2_files', 'iet.sample.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     *
+     * @dataProvider addTargetDuplicationErrorProvider
+     */
+    public function testAddTargetDuplicationError($dir, $sourceFile)
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\DuplicationErrorException');
 
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
+        $objects = $this->normalize($dir, $sourceFile);
 
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->addTarget()->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+
+        if ($objects['normalizer']->check()) {
+            $parser->addTarget()->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
         }
     }
 
-    public function testDeleteTarget()
+    public static function deleteTargetProvider()
     {
-        $file = 'iet.expected.testDeleteTarget.conf';
-
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:delete');
-
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->deleteTarget()->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
-        }
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testDeleteTarget.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testDeleteTarget.conf'],
+        ];
     }
 
-    public function testDeleteTargetNotFoundException()
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedFile
+     *
+     * @dataProvider deleteTargetProvider
+     */
+    public function testDeleteTarget($dir, $sourceFile, $expectedFile)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:delete');
+
+        if ($objects['normalizer']->check()) {
+            $parser->deleteTarget()->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+    }
+
+    public static function deleteTargetNotFoundExceptionProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf'],
+            ['case2_files', 'iet.sample.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     *
+     * @dataProvider deleteTargetNotFoundExceptionProvider
+     */
+    public function testDeleteTargetNotFoundException($dir, $sourceFile)
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
 
-        foreach ($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:notFound');
+        $objects = $this->normalize($dir, $sourceFile);
 
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->deleteTarget()->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:notFound');
 
-            }
+        if ($objects['normalizer']->check()) {
+            $parser->deleteTarget()->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
         }
     }
 
-    public function testDeleteTargetNotEmptyException()
+    public static function deleteTargetNotEmptyExceptionProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf'],
+            ['case2_files', 'iet.sample.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     *
+     * @dataProvider deleteTargetNotEmptyExceptionProvider
+     */
+    public function testDeleteTargetNotEmptyException($dir, $sourceFile)
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\TargetNotEmptyException');
 
-        foreach ($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
+        $objects = $this->normalize($dir, $sourceFile);
 
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->deleteTarget()->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+
+        if ($objects['normalizer']->check()) {
+            $parser->deleteTarget()->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
         }
     }
 
-    public function testAddOption()
+    public static function addOptionProvider()
     {
-        $file = 'iet.expected.testAddOption.conf';
-
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
-
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->addOption('This is a awesome option')->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
-        }
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testAddOption.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testAddOption.conf'],
+        ];
     }
 
-    public function testAddOptionUpdate()
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedFile
+     *
+     * @dataProvider addOptionProvider
+     */
+    public function testAddOption($dir, $sourceFile, $expectedFile)
     {
-        $file = 'iet.expected.testAddOptionUpdate.conf';
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $objects = $this->normalize($dir, $sourceFile);
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server17');
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
 
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->addOption('ImmediateData No')->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
+        if ($objects['normalizer']->check()) {
+            $parser->addOption('This is a awesome option')->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
         }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 
-    public function testAddOptionNotFoundException()
+    public static function addOptionUpdateProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testAddOptionUpdate.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testAddOptionUpdate.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedFile
+     *
+     * @dataProvider addOptionUpdateProvider
+     */
+    public function testAddOptionUpdate($dir, $sourceFile, $expectedFile)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server17');
+
+        if ($objects['normalizer']->check()) {
+            $parser->addOption('ImmediateData No')->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+    }
+
+    public static function addOptionNotFoundExceptionProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf'],
+            ['case2_files', 'iet.sample.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     *
+     * @dataProvider addOptionNotFoundExceptionProvider
+     */
+    public function testAddOptionNotFoundException($dir, $sourceFile)
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
 
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:notFound');
+        $objects = $this->normalize($dir, $sourceFile);
 
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->addOption('This is a awesome option')->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:notFound');
+
+        if ($objects['normalizer']->check()) {
+            $parser->addOption('This is a awesome option')->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
         }
     }
 
-    public function testDeleteOption()
+    public static function deleteOptionProvider()
     {
-        $file = 'iet.expected.testDeleteOption.conf';
-
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:ex');
-
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->deleteOption('MaxBurstLength')->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
-        }
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testDeleteOption.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testDeleteOption.conf'],
+        ];
     }
 
-    public function testGetOptions()
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedFile
+     *
+     * @dataProvider deleteOptionProvider
+     */
+    public function testDeleteOption($dir, $sourceFile, $expectedFile)
     {
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
+        $objects = $this->normalize($dir, $sourceFile);
 
-            if ($objects['normalizer']->check()) {
-                $data = $objects['parser']->getOptions();
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:ex');
 
-                $this->assertEquals(collect([
+        if ($objects['normalizer']->check()) {
+            $parser->deleteOption('MaxBurstLength')->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+    }
+
+    public static function getOptionsProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf',
+                [
                     'IncomingUser user2 password2',
                     'ImmediateData Yes',
                     'Lun 0 Type=fileio,Path=/dev/VG_Datastore02/LV_server2',
                     'Lun 1 Type=blockio,Path=/dev/VG_Datastore03/LV_server2'
-                ]), $data);
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
+                ]
+            ],
+            ['case2_files', 'iet.sample.conf',
+                [
+                    'ImmediateData Yes',
+                    'Lun 0 Type=fileio,Path=/dev/VG_Datastore02/LV_server2',
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedData
+     *
+     * @dataProvider getOptionsProvider
+     */
+    public function testGetOptions($dir, $sourceFile, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+
+        if ($objects['normalizer']->check()) {
+            $data = $parser->getOptions();
+
+            $this->assertEquals(collect($expectedData), $data);
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
         }
     }
 
-    public function testGetLunSingle()
+    public static function getLunSingleProvider()
     {
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
-
-            if ($objects['normalizer']->check()) {
-                $data = $objects['parser']->getLun(1);
-
-                $this->assertEquals(collect([
+        return [
+            ['case1_files', 'iet.sample.conf',
+                [
                     'id' => '1',
                     'type' => 'blockio',
                     'path' => '/dev/VG_Datastore03/LV_server2'
-                ]), $data);
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-        }
-    }
-
-    public function testGetLun()
-    {
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server18');
-
-            if ($objects['normalizer']->check()) {
-                $data = $objects['parser']->getLun();
-
-                $this->assertEquals(collect([
-                    0 => [
-                        'id' => '0',
-                        'type' => 'fileio',
-                        'iomode' => 'wt',
-                        'path' => '/dev/VG_Datastore01/LV_server43'
-                    ],
-                    1 => [
-                        'id' => '1',
-                        'type' => 'fileio',
-                        'path' => '/dev/VG_Datastore02/LV_server18'
-                    ]
-                ]), $data);
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-        }
-    }
-
-    public function testAddLun()
-    {
-        $file = 'iet.expected.testAddLun.conf';
-
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
-
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->addLun('/dev/null', 'blockio')->write();
-
-
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
-        }
-    }
-
-    public function testDeleteLun()
-    {
-        $file = 'iet.expected.testDeleteLun.conf';
-
-        foreach($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $objects = $this->normalize($dir, 'iqn.2016-08.test.ing.host:server1');
-
-            if ($objects['normalizer']->check()) {
-                $objects['parser']->deleteLun(0)->write();
-
-
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
-
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $file, $dir . DIRECTORY_SEPARATOR . $this->testFile);
-        }
-    }
-
-    public function tearDown()
-    {
-        foreach ($this->dirs as $dir) {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
-
-            $file = $dir . DIRECTORY_SEPARATOR . $this->testFile;
-
-            if (file_exists($file)) {
-                unlink($file);
-            }
-        }
-    }
-
-    private function normalize($dir, $target)
-    {
-        // Create new filesystem adapter
-        $local = new Local($dir, LOCK_EX);
-
-        // create new filesystem
-        $filesystem = new Filesystem($local);
-
-        // for testing purposes: copy the sample file. So we don't change the real data
-        $filesystem->copy($this->sampleFile, $this->testFile);
-
-        // create normalizer instance
-        $normalizer = new Normalizer($filesystem, $this->testFile);
-
-        // normalize the file
-        $normalizer->write();
-
-        // create parser instance
-        $parser = new TargetParser($filesystem, $this->testFile, $target);
-
-        return [
-            'normalizer' => $normalizer,
-            'parser' => $parser,
-            'filesystem' => $filesystem
+                ]
+            ],
+            ['case2_files', 'iet.sample.conf',
+                [
+                    'id' => '0',
+                    'type' => 'fileio',
+                    'path' => '/dev/VG_Datastore02/LV_server2'
+                ]
+            ]
         ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedData
+     *
+     * @dataProvider getLunSingleProvider
+     */
+    public function testGetLunSingle($dir, $sourceFile, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+
+        if ($objects['normalizer']->check()) {
+            $data = $parser->getLun($expectedData['id']);
+
+            $this->assertEquals(collect($expectedData), $data);
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+    }
+
+    public static function getLunProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf', [
+                [
+                    'id' => '0',
+                    'type' => 'fileio',
+                    'iomode' => 'wt',
+                    'path' => '/dev/VG_Datastore01/LV_server43'
+                ],
+                [
+                    'id' => '1',
+                    'type' => 'fileio',
+                    'path' => '/dev/VG_Datastore02/LV_server18'
+                ]
+            ]
+            ],
+            ['case2_files', 'iet.sample.conf', [
+                [
+                    'id' => '0',
+                    'type' => 'fileio',
+                    'iomode' => 'wt',
+                    'path' => '/dev/VG_Datastore01/LV_server43'
+                ],
+                [
+                    'id' => '1',
+                    'type' => 'fileio',
+                    'path' => '/dev/VG_Datastore02/LV_server18'
+                ]
+            ]
+            ]
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedData
+     *
+     * @dataProvider getLunProvider
+     */
+    public function testGetLun($dir, $sourceFile, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server18');
+
+        if ($objects['normalizer']->check()) {
+            $data = $parser->getLun();
+
+            $this->assertEquals(collect($expectedData), $data);
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+    }
+
+    public static function addLunProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testAddLun.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testAddLun.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedData
+     *
+     * @dataProvider addLunProvider
+     */
+    public function testAddLun($dir, $sourceFile, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+
+        if ($objects['normalizer']->check()) {
+            $parser->addLun('/dev/null', 'blockio')->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedData, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+    }
+
+    public static function deleteLunProvider()
+    {
+        return [
+            ['case1_files', 'iet.sample.conf', 'iet.expected.testDeleteLun.conf'],
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testDeleteLun.conf'],
+        ];
+    }
+
+    /**
+     * @param $dir
+     * @param $sourceFile
+     * @param $expectedData
+     *
+     * @dataProvider deleteLunProvider
+     */
+    public function testDeleteLun($dir, $sourceFile, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+
+        if ($objects['normalizer']->check()) {
+            $parser->deleteLun(0)->write();
+
+
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedData, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 }

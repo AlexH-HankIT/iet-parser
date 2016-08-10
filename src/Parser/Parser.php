@@ -74,6 +74,13 @@ class Parser
     protected $target;
 
     /**
+     * Line of target inside in the $this->fileContent collection
+     *
+     * @var bool|mixed
+     */
+    protected $targetId;
+
+    /**
      * Parser constructor.
      *
      * @param Filesystem $filesystem Filesystem instance

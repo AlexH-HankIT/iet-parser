@@ -36,13 +36,6 @@ use League\Flysystem\Filesystem;
 class TargetParser extends Parser
 {
     /**
-     * Line of target inside in the $this->fileContent collection
-     *
-     * @var bool|mixed
-     */
-    protected $targetId;
-
-    /**
      * Line of the next target in the $this->fileContent collection
      *
      * @var bool
