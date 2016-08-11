@@ -114,19 +114,109 @@ class AclParserTest extends PHPUnit_Framework_TestCase
         $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 
-    public function testDeleteParserErrorException()
+    public static function deleteParserErrorExceptionProvider()
     {
-
+        return [
+            ['sample/initiators.sample.2.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz', '8.8.8.8']
+        ];
     }
 
-    public function testDeleteNotFoundException()
+    /**
+     * @param $sourceFile
+     * @param $iqn
+     * @param $acl
+     *
+     * @dataProvider deleteParserErrorExceptionProvider
+     */
+    public function testDeleteParserErrorException($sourceFile, $iqn, $acl)
     {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\ParserErrorException');
 
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+
+        if ($objects['normalizer']->check()) {
+            $parser->delete($acl)->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
     }
 
-    public function testGet()
+    public static function deleteNotFoundExceptionProvider()
     {
+        return [
+            ['sample/initiators.sample.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz.notFound', '8.8.8.8'],
+            ['sample/initiators.sample.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', '8.8.8.8'],
+        ];
+    }
 
+    /**
+     * @param $sourceFile
+     * @param $iqn
+     * @param $acl
+     *
+     * @dataProvider deleteNotFoundExceptionProvider
+     */
+    public function testDeleteNotFoundException($sourceFile, $iqn, $acl)
+    {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
+
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+
+        if ($objects['normalizer']->check()) {
+            $parser->delete($acl)->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+    }
+
+    public static function getProvider()
+    {
+        return [
+            ['sample/initiators.sample.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', false,
+                [
+                    '192.168.100.61'
+                ]
+            ],
+            ['sample/initiators.sample.1.allow', null, true,
+                [
+
+                ]
+            ],
+        ];
+    }
+
+
+    /**
+     * @param $sourceFile
+     * @param $iqn
+     * @param $all
+     * @param $expectedData
+     *
+     * @dataProvider getProvider
+     */
+    public function testGet($sourceFile, $iqn, $all, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+
+        if ($objects['normalizer']->check()) {
+            $data = $parser->get($all);
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertEquals(collect($expectedData), $data);
     }
 
     public function testGetParserErrorException()
