@@ -49,14 +49,69 @@ class AclParserTest extends PHPUnit_Framework_TestCase
         $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 
-    public function testAddDuplicationErrorException()
+    public static function addDuplicationErrorExceptionProvider()
     {
-
+        return [
+            ['sample/initiators.sample.testAdd.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', '95.123.123.43']
+        ];
     }
 
-    public function testDelete()
+    /**
+     * @param $sourceFile
+     * @param $iqn
+     * @param $acl
+     *
+     * @dataProvider addDuplicationErrorExceptionProvider
+     */
+    public function testAddDuplicationErrorException($sourceFile, $iqn, $acl)
     {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\DuplicationErrorException');
 
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+
+        if ($objects['normalizer']->check()) {
+            $parser->add($acl)->write();
+            $parser->add($acl)->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+    }
+
+    public static function deleteProvider()
+    {
+        return [
+            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testDelete.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz', 'iqn\.1998-01\.com\.vmware:.*\.example\.com'],
+            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testDelete.2.allow', 'iqn.2001-04.com.example:storage.disk1.sys3.xyz', 'ALL'],
+            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testDelete.3.allow', 'iqn.2001-04.com.example:storage.disk1.sys7.xyz', '192.168.100.53'],
+        ];
+    }
+
+    /**
+     * @param $sourceFile
+     * @param $iqn
+     * @param $acl
+     *
+     * @dataProvider deleteProvider
+     */
+    public function testDelete($sourceFile, $expectedFile, $iqn, $acl)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+
+        if ($objects['normalizer']->check()) {
+            $parser->delete($acl)->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 
     public function testDeleteParserErrorException()
