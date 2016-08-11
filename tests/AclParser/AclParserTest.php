@@ -17,10 +17,10 @@ class AclParserTest extends PHPUnit_Framework_TestCase
     public static function addProvider()
     {
         return [
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testAdd.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', '95.123.123.43'],
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testAdd.2.allow', 'iqn.2001-04.com.example:storage.disk1.sys8.xyz', '8.8.8.8'],
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testAdd.3.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz', '[3ffe:302:11:1:211:43ff:fe31:5ae2]'],
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testAdd.4.allow', 'iqn.2001-04.com.example:storage.disk1.sys10.xyz', '[fe80::f939:2dfe:5469:1bc6]'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testAdd.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', '95.123.123.43'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testAdd.2.allow', 'iqn.2001-04.com.example:storage.disk1.sys8.xyz', '8.8.8.8'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testAdd.3.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz', '[3ffe:302:11:1:211:43ff:fe31:5ae2]'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testAdd.4.allow', 'iqn.2001-04.com.example:storage.disk1.sys10.xyz', '[fe80::f939:2dfe:5469:1bc6]'],
         ];
     }
 
@@ -52,7 +52,7 @@ class AclParserTest extends PHPUnit_Framework_TestCase
     public static function addDuplicationErrorExceptionProvider()
     {
         return [
-            ['sample/initiators.sample.testAdd.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', '95.123.123.43']
+            ['sample/initiators.sample.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', '95.123.123.43']
         ];
     }
 
@@ -84,9 +84,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
     public static function deleteProvider()
     {
         return [
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testDelete.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz', 'iqn\.1998-01\.com\.vmware:.*\.example\.com'],
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testDelete.2.allow', 'iqn.2001-04.com.example:storage.disk1.sys3.xyz', 'ALL'],
-            ['sample/initiators.sample.testAdd.1.allow', 'expected/initiators.expected.testDelete.3.allow', 'iqn.2001-04.com.example:storage.disk1.sys7.xyz', '192.168.100.53'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testDelete.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys4.xyz', 'iqn\.1998-01\.com\.vmware:.*\.example\.com'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testDelete.2.allow', 'iqn.2001-04.com.example:storage.disk1.sys3.xyz', 'ALL'],
+            ['sample/initiators.sample.1.allow', 'expected/initiators.expected.testDelete.3.allow', 'iqn.2001-04.com.example:storage.disk1.sys7.xyz', '192.168.100.53'],
         ];
     }
 
