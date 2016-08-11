@@ -15,8 +15,10 @@
 namespace MrCrankHank\IetParser\Parser;
 
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use Illuminate\Support\Collection;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
+use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
  * Class Parser
@@ -27,7 +29,7 @@ use MrCrankHank\IetParser\Exceptions\NotFoundException;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class Parser
+class Parser implements ParserInterface
 {
     /**
      * Contains a Filesystem instance
@@ -87,7 +89,7 @@ class Parser
      * @param string     $filePath   Path to the file
      * @param string     $target     IQN
      */
-    public function __construct(Filesystem $filesystem, $filePath, $target = null)
+    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
     {
         $this->filesystem = $filesystem;
         $this->filePath = $filePath;

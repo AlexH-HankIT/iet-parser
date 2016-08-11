@@ -14,10 +14,12 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Exceptions\ParserErrorException;
+use MrCrankHank\IetParser\Interfaces\AclParserInterface;
+use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
  * Class AclParser
@@ -32,9 +34,9 @@ use MrCrankHank\IetParser\Exceptions\ParserErrorException;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class AclParser extends Parser
+class AclParser extends Parser implements ParserInterface, AclParserInterface
 {
-    public function __construct(Filesystem $filesystem, $filePath, $target)
+    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
     {
         parent::__construct($filesystem, $filePath, $target);
 

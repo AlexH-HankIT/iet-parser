@@ -16,6 +16,8 @@ namespace MrCrankHank\IetParser\Parser;
 
 use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
+use MrCrankHank\IetParser\Interfaces\GlobalOptionParserInterface;
+use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
  * Class GlobalOption
@@ -30,7 +32,7 @@ use MrCrankHank\IetParser\Exceptions\NotFoundException;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class GlobalOptionParser extends Parser
+class GlobalOptionParser extends Parser implements ParserInterface, GlobalOptionParserInterface
 {
     /**
      * Add a global line

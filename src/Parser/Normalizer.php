@@ -14,6 +14,8 @@
  */
 
 namespace MrCrankHank\IetParser\Parser;
+use MrCrankHank\IetParser\Interfaces\NormalizerInterface;
+use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
  * Class Normalizer
@@ -24,7 +26,7 @@ namespace MrCrankHank\IetParser\Parser;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class Normalizer extends Parser
+class Normalizer extends Parser implements ParserInterface, NormalizerInterface
 {
     /**
      * Normalize a ietd file
@@ -89,6 +91,8 @@ class Normalizer extends Parser
 
     /**
      * Write the normalized data to the file
+     *
+     * This violates the Liskov Substitution principle :S
      *
      * @return void
      */

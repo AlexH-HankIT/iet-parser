@@ -18,7 +18,9 @@ use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
 use Illuminate\Support\Collection;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
+use MrCrankHank\IetParser\Interfaces\ParserInterface;
+use MrCrankHank\IetParser\Interfaces\TargetParserInterface;
 
 /**
  * Class TargetParser
@@ -33,7 +35,7 @@ use League\Flysystem\Filesystem;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class TargetParser extends Parser
+class TargetParser extends Parser implements ParserInterface, TargetParserInterface
 {
     /**
      * Line of the next target in the $this->fileContent collection
@@ -51,11 +53,11 @@ class TargetParser extends Parser
 
     /**
      * TargetParser constructor.
-     * @param Filesystem $filesystem
-     * @param string     $filePath
-     * @param string     $target
+     * @param FilesystemInterface $filesystem
+     * @param string              $filePath
+     * @param string              $target
      */
-    public function __construct(Filesystem $filesystem, $filePath, $target = null)
+    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
     {
         parent::__construct($filesystem, $filePath, $target);
 
