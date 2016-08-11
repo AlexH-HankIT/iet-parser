@@ -139,6 +139,10 @@ class AclParser extends Parser
 
     private function _getSingle()
     {
+        if ($this->targetId === false) {
+            return collect([]);
+        }
+
         $line = $this->fileContent->get($this->targetId);
 
         // explode array by comma we get everything
