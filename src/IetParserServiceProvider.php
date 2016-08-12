@@ -16,9 +16,10 @@
 namespace MrCrankHank\IetParser;
 
 use Illuminate\Support\ServiceProvider;
+use MrCrankHank\IetParser\Parser\AclParser;
 use MrCrankHank\IetParser\Parser\Normalizer;
-use MrCrankHank\IetParser\Console\Normalize;
-use MrCrankHank\IetParser\Parser\GlobalOptionParser;;
+use MrCrankHank\IetParser\Parser\TargetParser;
+use MrCrankHank\IetParser\Parser\GlobalOptionParser;
 
 /**
  * Class IetParserServiceProvider
@@ -36,9 +37,7 @@ class IetParserServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $commands = [
-        Normalize::class
-    ];
+    protected $commands = [];
 
     /**
      * Bootstrap the application services.
@@ -47,7 +46,7 @@ class IetParserServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+        //
     }
 
     /**
@@ -58,13 +57,20 @@ class IetParserServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            GlobalOptionParser::class, function ($app, $parameters) {
-                return new GlobalOptionParser(
-                    $parameters['filesystem'],
-                    $parameters['filePath']
-                );
-            }
+            AclParser::class, function($app, $parameters) {return new AclParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);}
         );
+
+        $this->app->bind(
+            GlobalOptionParser::class, function ($app, $parameters) {return new GlobalOptionParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);}
+        );
+
+        $this->app->bind(function($app, $parameters) {
+            return new Normalizer($parameters['filesystem'], $parameters['filePath']);
+        });
+
+        $this->app->bind(function($app, $parameters) {
+            return new TargetParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);
+        });
 
         $this->commands($this->commands);
     }
