@@ -58,12 +58,6 @@ class IetParserServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            Normalizer::class, function ($app, $parameters) {
-                return new Normalizer($parameters['parser']);
-            }
-        );
-
-        $this->app->bind(
             GlobalOptionParser::class, function ($app, $parameters) {
                 return new GlobalOptionParser(
                     $parameters['filesystem'],
