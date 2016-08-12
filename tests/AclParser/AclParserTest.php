@@ -182,12 +182,46 @@ class AclParserTest extends PHPUnit_Framework_TestCase
         return [
             ['sample/initiators.sample.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys5.xyz', false,
                 [
-                    '192.168.100.61'
+                    0 => '192.168.100.61'
+                ]
+            ],
+            ['sample/initiators.sample.1.allow', 'iqn.2001-04.com.example:storage.disk1.sys2.xyz', false,
+                [
+                    0 => '[3ffe:302:11:1:211:43ff:fe31:5ae2]',
+                    1 => '[3ffe:505:2:1::]/64',
+                    2 => '192.168.22.0/24'
                 ]
             ],
             ['sample/initiators.sample.1.allow', null, true,
                 [
-
+                    'iqn.2001-04.com.example:storage.disk1.sys1.xyz' => collect([
+                        0 => '192.168.0.0/16',
+                        1 => '.*:mscs1-[1-4]\.example\.com'
+                    ]),
+                    'iqn.2001-04.com.example:storage.disk1.sys2.xyz' => collect([
+                        0 => '[3ffe:302:11:1:211:43ff:fe31:5ae2]',
+                        1 => '[3ffe:505:2:1::]/64',
+                        2 => '192.168.22.0/24'
+                    ]),
+                    'iqn.2001-04.com.example:storage.disk1.sys3.xyz' => collect([
+                        0 => 'ALL'
+                    ]),
+                    'iqn.2001-04.com.example:storage.disk1.sys4.xyz' => collect([
+                        0 => '192.168.22.3',
+                        1 => 'iqn\.1998-01\.com\.vmware:.*\.example\.com'
+                    ]),
+                    'ALL' => collect([
+                        0 => '192.168.0.0/16'
+                    ]),
+                    'iqn.2001-04.com.example:storage.disk1.sys5.xyz' => collect([
+                        0 => '192.168.100.61'
+                    ]),
+                    'iqn.2001-04.com.example:storage.disk1.sys6.xyz' => collect([
+                        0 => '192.168.100.58'
+                    ]),
+                    'iqn.2001-04.com.example:storage.disk1.sys7.xyz' => collect([
+                        0 => '192.168.100.53'
+                    ])
                 ]
             ],
         ];
@@ -219,8 +253,34 @@ class AclParserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(collect($expectedData), $data);
     }
 
-    public function testGetParserErrorException()
+    public static function getParserErrorExceptionProvider()
     {
+        return [
+            ['sample/initiators.sample.3.allow', 'iqn.2001-04.com.example:storage.disk1.sys3.xyz', false],
+        ];
+    }
 
+    /**
+     * @param $sourceFile
+     * @param $iqn
+     * @param $all
+     *
+     * @dataProvider getParserErrorExceptionProvider
+     */
+    public function testGetParserErrorException($sourceFile, $iqn, $all)
+    {
+        $this->expectException('MrCrankHank\IetParser\Exceptions\ParserErrorException');
+
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $objects = $this->normalize($dir, $sourceFile);
+
+        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+
+        if ($objects['normalizer']->check()) {
+            $parser->get($all);
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
     }
 }

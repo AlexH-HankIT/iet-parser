@@ -159,6 +159,8 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         // remove index with iqn
         unset($acls[0]);
 
+        var_dump($acl);
+
         // prepend the extract acl to the collection
         $acls->prepend($acl[1]);
 
