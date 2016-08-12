@@ -159,14 +159,12 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         // remove index with iqn
         unset($acls[0]);
 
-        var_dump($acl);
+        if(!isset($acl[1])) {
+            throw new ParserErrorException('The target ' . $this->target . ' has no acls');
+        }
 
         // prepend the extract acl to the collection
         $acls->prepend($acl[1]);
-
-        if ($acls->isEmpty()) {
-            throw new ParserErrorException('The target ' . $this->target . ' has no acls');
-        }
 
         // trim spaces
         $acls = $acls->map(function($item, $key) {
