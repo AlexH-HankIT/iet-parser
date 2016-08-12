@@ -56,19 +56,19 @@ class IetParserServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            AclParser::class, function($app, $parameters) {return new AclParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);}
+        $this->app->bind(AclParser::class, function($app, $parameters) {
+            return new AclParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);}
         );
 
-        $this->app->bind(
-            GlobalOptionParser::class, function ($app, $parameters) {return new GlobalOptionParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);}
+        $this->app->bind(GlobalOptionParser::class, function ($app, $parameters) {
+            return new GlobalOptionParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);}
         );
 
-        $this->app->bind(function($app, $parameters) {
+        $this->app->bind(Normalizer::class, function($app, $parameters) {
             return new Normalizer($parameters['filesystem'], $parameters['filePath']);
         });
 
-        $this->app->bind(function($app, $parameters) {
+        $this->app->bind(TargetParser::class, function($app, $parameters) {
             return new TargetParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);
         });
 
