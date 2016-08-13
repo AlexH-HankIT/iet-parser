@@ -97,12 +97,12 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     public function getVolume($target = false)
     {
         if (is_int($target)) {
-            return collect($this->_parseVolume(true)->get($target));
+            return $this->_parseVolume(true)->get($target);
         } else if ($target === false) {
             return $this->_parseVolume($this->tidIndex);
         } else {
             // if target is not a boolean or integer, it has to be a string aka iqn
-            return collect($this->_parseVolume(false)->get($target));
+            return $this->_parseVolume(false)->get($target);
         }
     }
 

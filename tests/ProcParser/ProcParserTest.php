@@ -92,7 +92,76 @@ class ProcParserTest extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testGetVolume()
+    public static function getVolumeSingleProvider()
+    {
+        return [
+            ['volume.1', 'iqn.2014-08.local.example.san01:session', 2,
+                [
+                    'iqn' => 'iqn.2014-08.local.example.san01:session',
+                    'tid' => '2',
+                    0 => [
+                        'state' => '0',
+                        'iotype' => 'fileio',
+                        'iomode' => 'wt',
+                        'blocks' => '209715200',
+                        'blocksize' => '512',
+                        'path' => '/dev/VG_Datastore02/LV_session'
+                    ]
+                ]
+            ],
+            ['volume.1', 'iqn.2014-08.local.example.san01:time', 11,
+                [
+                    'iqn' => 'iqn.2014-08.local.example.san01:time',
+                    'tid' => '11',
+                    0 => [
+                        'state' => '0',
+                        'iotype' => 'blockio',
+                        'iomode' => 'wt',
+                        'blocks' => '419430400',
+                        'blocksize' => '512',
+                        'path' => '/dev/VG_Datastore03/LV_time'
+                    ],
+                    1 => [
+                        'state' => '0',
+                        'iotype' => 'blockio',
+                        'iomode' => 'wt',
+                        'blocks' => '309420400',
+                        'blocksize' => '512',
+                        'path' => '/dev/VG_Datastore/LV_time_2'
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param $file
+     * @param $target
+     * @param $tid
+     * @param $expectedData
+     *
+     * @dataProvider getVolumeSingleProvider
+     */
+    public function testGetVolumeSingle($file, $target, $tid, $expectedData)
+    {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . 'files';
+
+        $local = new Local($dir, LOCK_EX);
+
+        $filesystem = new Filesystem($local);
+
+        $parser = new ProcParser($filesystem, $file);
+
+        $iqnData = $parser->getVolume($target);
+
+        $tidData = $parser->getVolume($tid);
+
+        $this->assertEquals($iqnData, $expectedData);
+
+        $this->assertEquals($tidData, $expectedData);
+    }
+
+    public function testGetVolumeMultiple()
     {
 
     }
