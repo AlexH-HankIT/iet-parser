@@ -14,5 +14,12 @@
 
 ### ToDo:   
 * ProcParser
-    * getSession (+ param for single one)
-    * getVolumes (+ param for single one)
+    * Tests
+        * getSession() test data with multiple, single and no sessions
+            * all 
+            * single (id)
+            * single (iqn)
+         * getVolume() test data with multiple, single and no sessions
+             * all 
+             * single (id)
+             * single (iqn)

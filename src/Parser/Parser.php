@@ -85,9 +85,9 @@ class Parser implements ParserInterface
     /**
      * Parser constructor.
      *
-     * @param Filesystem $filesystem Filesystem instance
-     * @param string     $filePath   Path to the file
-     * @param string     $target     IQN
+     * @param FilesystemInterface $filesystem Filesystem instance
+     * @param string              $filePath   Path to the file
+     * @param string              $target     IQN
      */
     public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
     {
