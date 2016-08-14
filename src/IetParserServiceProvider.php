@@ -17,7 +17,9 @@ namespace MrCrankHank\IetParser;
 
 use Illuminate\Support\ServiceProvider;
 use MrCrankHank\IetParser\Parser\AclParser;
+use MrCrankHank\IetParser\Parser\Diff;
 use MrCrankHank\IetParser\Parser\Normalizer;
+use MrCrankHank\IetParser\Parser\ProcParser;
 use MrCrankHank\IetParser\Parser\TargetParser;
 use MrCrankHank\IetParser\Parser\GlobalOptionParser;
 
@@ -70,6 +72,10 @@ class IetParserServiceProvider extends ServiceProvider
 
         $this->app->bind(TargetParser::class, function($app, $parameters) {
             return new TargetParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);
+        });
+
+        $this->app->bind(ProcParser::class, function($app, $parameters) {
+            return new ProcParser($parameters['filesystem'], $parameters['filePath'], $parameters['target']);
         });
 
         $this->commands($this->commands);
