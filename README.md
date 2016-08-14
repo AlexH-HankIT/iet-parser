@@ -2,8 +2,11 @@
 This is a parser for the config and proc files used by the iscsi enterprise target.
 It's fully functional e.g. add targets, add acls and stuff like that.
 
-### Documentation
-Already created, but link is unknown. Will be added soon.
+### Api documentation
+https://mrcrankhank.github.io/iet-parser/
+
+### Packagist
+https://packagist.org/packages/mrcrankhank/iet-parser
 
 ### Some notes about the parser:
 * Comments starting with # are preserved, but inline comments will be removed.
