@@ -1,3 +1,9 @@
+# iet-parser
+[![Build Status](https://api.travis-ci.org/MrCrankHank/iet-parser.svg)](https://api.travis-ci.org/MrCrankHank/iet-parser.svg)
+[![Total Downloads](https://poser.pugx.org/mrcrankhank/iet-parser/downloads)](https://packagist.org/packages/mrcrankhank/iet-parser)
+[![Latest Unstable Version](https://poser.pugx.org/mrcrankhank/iet-parser/v/unstable)](https://packagist.org/packages/mrcrankhank/iet-parser)
+[![License](https://poser.pugx.org/mrcrankhank/iet-parser/license)](https://packagist.org/packages/mrcrankhank/iet-parser)
+
 ### Description
 This is a parser for the config and proc files used by the iscsi enterprise target.
 It's fully functional e.g. add targets, add acls and stuff like that.
