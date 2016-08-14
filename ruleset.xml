@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<ruleset name="Custom">
-    <description>Default, but without linelength check.</description>
-    <rule ref="PEAR">
-        <exclude name="Generic.Files.LineLength"/>
-        <exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket"/>
-        <exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine"/>
-    </rule>
-</ruleset>
