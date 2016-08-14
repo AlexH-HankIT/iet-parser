@@ -1,6 +1,7 @@
 {
     "name": "mrcrankhank/iet-parser",
     "type": "library",
+    "description": "A parser for the config and proc files of the iet (iscsi enterprise target)",
     "license": "Apache License 2.0",
     "authors": [
         {
