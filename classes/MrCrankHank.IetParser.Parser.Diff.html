@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/MrCrankHank.html">\MrCrankHank</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">101</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-307980235"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-307980235" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2095933240"></a>
+                                <a href="../namespaces/MrCrankHank.html" style="margin-left: 30px; padding-left: 0">MrCrankHank</a>
+            </div>
+            <div id="namespace-2095933240" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-611918819"></a>
+                                <a href="../namespaces/MrCrankHank.IetParser.html" style="margin-left: 30px; padding-left: 0">IetParser</a>
+            </div>
+            <div id="namespace-611918819" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1569138656"></a>
+                                <a href="../namespaces/MrCrankHank.IetParser.Exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1569138656" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Exceptions.BaseException.html">BaseException</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Exceptions.DuplicationErrorException.html">DuplicationErrorException</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Exceptions.NotFoundException.html">NotFoundException</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Exceptions.ParserErrorException.html">ParserErrorException</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Exceptions.TargetNotEmptyException.html">TargetNotEmptyException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-691495377"></a>
+                                <a href="../namespaces/MrCrankHank.IetParser.Interfaces.html" style="margin-left: 30px; padding-left: 0">Interfaces</a>
+            </div>
+            <div id="namespace-691495377" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/MrCrankHank.IetParser.Interfaces.AclParserInterface.html">AclParserInterface</a></li>
+                                                    <li class="interface"><a href="../classes/MrCrankHank.IetParser.Interfaces.GlobalOptionParserInterface.html">GlobalOptionParserInterface</a></li>
+                                                    <li class="interface"><a href="../classes/MrCrankHank.IetParser.Interfaces.NormalizerInterface.html">NormalizerInterface</a></li>
+                                                    <li class="interface"><a href="../classes/MrCrankHank.IetParser.Interfaces.ParserInterface.html">ParserInterface</a></li>
+                                                    <li class="interface"><a href="../classes/MrCrankHank.IetParser.Interfaces.ProcParserInterface.html">ProcParserInterface</a></li>
+                                                    <li class="interface"><a href="../classes/MrCrankHank.IetParser.Interfaces.TargetParserInterface.html">TargetParserInterface</a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-202092058"></a>
+                                <a href="../namespaces/MrCrankHank.IetParser.Parser.html" style="margin-left: 30px; padding-left: 0">Parser</a>
+            </div>
+            <div id="namespace-202092058" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.AclParser.html">AclParser</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.Diff.html">Diff</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.GlobalOptionParser.html">GlobalOptionParser</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.Normalizer.html">Normalizer</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.Parser.html">Parser</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.ProcParser.html">ProcParser</a></li>
+                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.Parser.TargetParser.html">TargetParser</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/MrCrankHank.IetParser.IetParserServiceProvider.html">IetParserServiceProvider</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/MrCrankHank.IetParser.Parser.html">\MrCrankHank\IetParser\Parser</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\MrCrankHank\IetParser\Parser</small>Diff</h1>
+                    <p><em>Class Diff</em></p>
+                    <p>A class containing a diff implementation</p>
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method_compare" class="">compare()</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method_compareFiles" class="">compareFiles()</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method_toString" class="">toString()</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method_toHTML" class="">toHTML()</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method_toTable" class="">toTable()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#constant_UNMODIFIED" class="">UNMODIFIED</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#constant_DELETED" class="">DELETED</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#constant_INSERTED" class="">INSERTED</a><br />
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method__computeTable" class="">_computeTable()</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method__generatePartialDiff" class="">_generatePartialDiff()</a><br />
+                                                                    <a href="../classes/MrCrankHank.IetParser.Parser.Diff.html#method__getCellContent" class="">_getCellContent()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/Parser.Diff.html"><div class="path-wrapper">Parser\Diff.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">IetParser\Parser</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\MrCrankHank\IetParser\Parser\Diff</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                                            <dt>See also</dt>
+                                                                                        <dd><a href="http://code.stephenmorley.org/php/diff-implementation/"><span class="namespace-wrapper">http://code.stephenmorley.org/php/diff-implementation/</span></a></dd>
+                                                    
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Parser</p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>Stephen Morley <a href="http://stephenmorley.org/">http://stephenmorley.org/</a></p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                license
+                            </th>
+                            <td>
+                                                                    <p>CC0 1.0 Universal legal code
+<a href="http://creativecommons.org/publicdomain/zero/1.0/legalcode">http://creativecommons.org/publicdomain/zero/1.0/legalcode</a></p>
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                                    <a id="constants" name="constants"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Constants</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_UNMODIFIED" name="constant_UNMODIFIED" class="anchor"></a>
+            <article id="constant_UNMODIFIED" class="constant">
+                <h3 class="">UNMODIFIED</h3>
+                <pre class="signature">UNMODIFIED</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_DELETED" name="constant_DELETED" class="anchor"></a>
+            <article id="constant_DELETED" class="constant">
+                <h3 class="">DELETED</h3>
+                <pre class="signature">DELETED</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="constant_INSERTED" name="constant_INSERTED" class="anchor"></a>
+            <article id="constant_INSERTED" class="constant">
+                <h3 class="">INSERTED</h3>
+                <pre class="signature">INSERTED</pre>
+                <p><em></em></p>
+                
+            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                        
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_compare" name="method_compare" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">compare()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">compare(string  <span class="argument">$string1</span>, string  <span class="argument">$string2</span>, boolean  <span class="argument">$compareCharacters = false</span>) : string</pre>
+                <p><em>Returns the diff for two strings. The return value is an array, each of
+whose values is an array containing two values: a line (or character, if
+$compareCharacters is true), and one of the constants DIFF::UNMODIFIED (the
+line or character is in both strings), DIFF::DELETED (the line or character
+is only in the first string), and DIFF::INSERTED (the line or character is
+only in the second string). The parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$string1 </td>
+                                <td><p>the first string</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$string2 </td>
+                                <td><p>the second string</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$compareCharacters </td>
+                                <td><p>true to compare characters,
+and false to compare
+lines; this optional parameter
+defaults to false</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_compareFiles" name="method_compareFiles" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">compareFiles()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">compareFiles(string  <span class="argument">$file1</span>, string  <span class="argument">$file2</span>, boolean  <span class="argument">$compareCharacters = false</span>) : string</pre>
+                <p><em>Returns the diff for two files. The parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$file1 </td>
+                                <td><p>the path to the first file</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$file2 </td>
+                                <td><p>the path to the second file</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$compareCharacters </td>
+                                <td><p>true to compare characters,
+and false to compare
+lines; this optional
+parameter defaults to false</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_toString" name="method_toString" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">toString()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">toString(string  <span class="argument">$diff</span>, string  <span class="argument">$separator = &quot;\n&quot;</span>) : string</pre>
+                <p><em>Returns a diff as a string, where unmodified lines are prefixed by &#039;  &#039;,
+deletions are prefixed by &#039;- &#039;, and insertions are prefixed by &#039;+ &#039;. The
+parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$diff </td>
+                                <td><p>the diff array</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$separator </td>
+                                <td><p>the separator between lines;
+this optional parameter defaults to &quot;\n&quot;</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_toHTML" name="method_toHTML" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">toHTML()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">toHTML(string  <span class="argument">$diff</span>, string  <span class="argument">$separator = &#039;&lt;br&gt;&#039;</span>) : string</pre>
+                <p><em>Returns a diff as an HTML string, where unmodified lines are contained
+within &#039;span&#039; elements, deletions are contained within &#039;del&#039; elements, and
+insertions are contained within &#039;ins&#039; elements. The parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$diff </td>
+                                <td><p>the diff array</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$separator </td>
+                                <td><p>the separator between lines;
+this optional parameter defaults to '<br>'</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_toTable" name="method_toTable" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">toTable()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">toTable(string  <span class="argument">$diff</span>, string  <span class="argument">$indentation = &#039;&#039;</span>, string  <span class="argument">$separator = &#039;&lt;br&gt;&#039;</span>) : string</pre>
+                <p><em>Returns a diff as an HTML table. The parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$diff </td>
+                                <td><p>the diff array</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$indentation </td>
+                                <td><p>indentation to add to every line
+of the generated HTML;
+this optional parameter defaults to ''</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$separator </td>
+                                <td><p>the separator between lines;
+this optional parameter defaults to '<br>'</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__computeTable" name="method__computeTable" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">_computeTable()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_computeTable(string  <span class="argument">$sequence1</span>, string  <span class="argument">$sequence2</span>, integer  <span class="argument">$start</span>, integer  <span class="argument">$end1</span>, integer  <span class="argument">$end2</span>) : string</pre>
+                <p><em>Returns the table of longest common subsequence lengths for the specified
+sequences. The parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sequence1 </td>
+                                <td><p>the first sequence</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sequence2 </td>
+                                <td><p>the second sequence</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$start </td>
+                                <td><p>the starting index</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$end1 </td>
+                                <td><p>the ending index for the first sequence</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$end2 </td>
+                                <td><p>the ending index for the second sequence</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__generatePartialDiff" name="method__generatePartialDiff" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">_generatePartialDiff()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_generatePartialDiff(string  <span class="argument">$table</span>, string  <span class="argument">$sequence1</span>, string  <span class="argument">$sequence2</span>, integer  <span class="argument">$start</span>) : string</pre>
+                <p><em>Returns the partial diff for the specificed sequences, in reverse order.</em></p>
+                <p>The parameters are:</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$table </td>
+                                <td><p>the table returned by the _computeTable function</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sequence1 </td>
+                                <td><p>the first sequence</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sequence2 </td>
+                                <td><p>the second sequence</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$start </td>
+                                <td><p>the starting index</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__getCellContent" name="method__getCellContent" class="anchor"></a>
+            <article class="method">
+                <h3 class="private ">_getCellContent()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_getCellContent(string  <span class="argument">$diff</span>, float  <span class="argument">$indentation</span>, string  <span class="argument">$separator</span>, string  <span class="argument">$index</span>, string  <span class="argument">$type</span>) : string</pre>
+                <p><em>Returns the content of the cell, for use in the toTable function. The
+parameters are:</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$diff </td>
+                                <td><p>the diff array</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>float</td>
+                                <td>$indentation </td>
+                                <td><p>indentation to add to
+every line of the generated HTML</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$separator </td>
+                                <td><p>the separator between lines</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$index </td>
+                                <td><p>the current index, passes by reference</p></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$type </td>
+                                <td><p>the type of line</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Diff.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/Parser\Diff.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/MrCrankHank.html">\MrCrankHank</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on August 14th, 2016 at 02:47.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>
