@@ -1,25 +1,22 @@
-### Parser comments
-* Preserve comments starting with # (But not in the middle of a line, only at the beginning)
-* Multi line definitions with \ are not supported
-* Empty lines might be removed
+### Description
+This is a parser for the config and proc files used by the iscsi enterprise target.
+It's fully functional e.g. add targets, add acls and stuff like that.
 
-### PHP sniffer
-* phpcs src --standard=ruleset.xml -s
+### Documentation
+Already created, but link is unknown. Will be added soon.
 
-### PHPUnit
-* Single test: phpunit --filter "/::testDeleteOption$/" .\tests\TargetParserAdd
+### Some notes about the parser:
+* Comments starting with # are preserved, but inline comments will be removed.
+* Multi line definitions with \ are not supported (Or are they? I really can't remember anymore. Damn it.)
+* Empty lines might be removed.
+
+### Testing
+The project contains multiple tests, which can be executed via phpunit.
 
 ### Links
 * https://manpages.debian.org/cgi-bin/man.cgi?sektion=5&query=ietd.conf&apropos=0&manpath=sid&locale=en
+* https://sourceforge.net/projects/iscsitarget/
 
-### ToDo:   
-* ProcParser
-    * Tests
-        * getSession() test data with multiple, single and no sessions
-            * all 
-            * single (id)
-            * single (iqn)
-         * getVolume() test data with multiple, single and no sessions
-             * all 
-             * single (id)
-             * single (iqn)
+### Some random notes for the author:
+* phpcs src --standard=ruleset.xml -s
+* Single test: phpunit --filter "/::testDeleteOption$/" .\tests\TargetParserAdd
