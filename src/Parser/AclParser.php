@@ -36,6 +36,13 @@ use MrCrankHank\IetParser\Interfaces\ParserInterface;
  */
 class AclParser extends Parser implements ParserInterface, AclParserInterface
 {
+    /**
+     * AclParser constructor.
+     *
+     * @param FilesystemInterface $filesystem
+     * @param string              $filePath
+     * @param null                $target
+     */
     public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
     {
         parent::__construct($filesystem, $filePath, $target);
@@ -43,6 +50,13 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         $this->targetId = $this->_findIqn();
     }
 
+    /**
+     * Add a acl for a target.
+     *
+     * @param $add
+     * @return $this
+     * @throws DuplicationErrorException
+     */
     public function add($add)
     {
         // get all acl for $this->iqn
@@ -67,6 +81,14 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         return $this;
     }
 
+    /**
+     * Delete acl from a target.
+     *
+     * @param $delete
+     * @return $this
+     * @throws NotFoundException
+     * @throws ParserErrorException
+     */
     public function delete($delete)
     {
         if ($this->fileContent->isEmpty()) {
@@ -101,6 +123,12 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         return $this;
     }
 
+    /**
+     * Get single or multiple acls
+     *
+     * @param bool $all
+     * @return \Illuminate\Support\Collection|static
+     */
     public function get($all = false)
     {
         if ($all === false) {
@@ -110,6 +138,11 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         }
     }
 
+    /**
+     * Get all acls
+     *
+     * @return \Illuminate\Support\Collection
+     */
     private function _getAll()
     {
         foreach($this->fileContent as $key => $line) {
@@ -139,6 +172,12 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         return collect($data);
     }
 
+    /**
+     * Get single acl
+     *
+     * @return \Illuminate\Support\Collection|static
+     * @throws ParserErrorException
+     */
     private function _getSingle()
     {
         if ($this->targetId === false) {
@@ -174,6 +213,11 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         return collect($acls)->values();
     }
 
+    /**
+     * Find iqn in file
+     *
+     * @return mixed
+     */
     private function _findIqn()
     {
        return $this->fileContent->search(function($item, $key) {

@@ -177,7 +177,8 @@ class Parser implements ParserInterface
      *
      * @return void
      */
-    public function refresh() {
+    public function refresh()
+    {
         $this->fileContent = $this->read();
     }
 

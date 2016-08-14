@@ -26,5 +26,5 @@ namespace MrCrankHank\IetParser\Exceptions;
  */
 class TargetNotEmptyException extends BaseException
 {
-
+    //
 }

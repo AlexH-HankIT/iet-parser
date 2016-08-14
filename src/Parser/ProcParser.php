@@ -209,7 +209,8 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      * @return \Illuminate\Support\Collection
      * @throws ParserErrorException
      */
-    private function _parseVolume($tidIndex) {
+    private function _parseVolume($tidIndex)
+    {
         foreach ($this->fileContent as $line) {
             if (substr($line, 0, 3) === 'tid') {
                 // Check for the target definition line
