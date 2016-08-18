@@ -17,7 +17,7 @@ https://packagist.org/packages/mrcrankhank/iet-parser
 
 ### Some notes about the parser:
 * Comments starting with # are preserved, but inline comments will be removed.
-* Multi line definitions with \ are not supported (Or are they? I really can't remember anymore. Damn it.)
+* Multi line definitions will be merged into one line.
 * Empty lines might be removed.
 
 ### Testing
