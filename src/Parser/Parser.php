@@ -260,7 +260,7 @@ class Parser implements ParserInterface
      */
     protected function findFirstTargetDefinition(Collection $fileContent)
     {
-        $firstTarget = $fileContent->first(function ($key, $value) {
+        $firstTarget = $fileContent->first(function ($value, $key) {
             if (substr($value, 0, 6) === 'Target') {
                 return true;
             }
