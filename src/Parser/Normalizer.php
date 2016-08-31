@@ -46,7 +46,7 @@ class Normalizer extends Parser implements ParserInterface, NormalizerInterface
 
         // remove spaces and the ending/beginning
         $fileContent = $originalFileContent->map(function ($line, $key) {
-            return trim($line, ' ');
+            return trim($line);
         });
 
         // create string from array
