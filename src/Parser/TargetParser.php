@@ -226,7 +226,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         }
 
         if (empty($luns)) {
-            throw new NotFoundException('The lun with the id of ' . $id . ' was not found');
+            throw new NotFoundException('Lun ' . $id . ' was not found');
         } else {
             return collect($luns)->values();
         }
