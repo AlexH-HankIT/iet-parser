@@ -350,6 +350,16 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
+     * Return the last added lun
+     *
+     * @return mixed
+     */
+    public function getLastAddedLun()
+    {
+        return $this->getLastAddedLun();
+    }
+
+    /**
      * Find a target definition
      *
      * @return bool|mixed
