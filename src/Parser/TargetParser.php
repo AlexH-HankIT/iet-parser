@@ -433,7 +433,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         $options = $this->getOptions();
 
         if ($options === false) {
-            throw new NotFoundException('The target ' . $this->target . ' has no options');
+            return false;
         } else {
             for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
                 if ($this->fileContent->has($i)) {
