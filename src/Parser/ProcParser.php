@@ -68,7 +68,7 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
 
         // remove spaces and the ending/beginning
         $this->fileContent->transform(function ($line, $key) {
-            return trim($line, ' ');
+            return trim($line);
         });
     }
 
