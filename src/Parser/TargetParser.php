@@ -197,7 +197,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      *
      * @param bool $id
      *
-     * @return Collection
+     * @return Collection|boolean
      *
      * @throws NotFoundException
      */
@@ -225,7 +225,9 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
             }
         }
 
-        if (empty($luns)) {
+        if (empty($luns) && $id === false) {
+            return false;
+        } else if (empty($luns)) {
             throw new NotFoundException('Lun ' . $id . ' was not found');
         } else {
             return collect($luns)->values();
@@ -467,6 +469,10 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
             return false;
         } else {
             $luns = $this->getLun();
+
+            if ($luns === false) {
+                return 0;
+            }
 
             foreach ($luns as $key => $lun) {
                 if (isset($luns[$key + 1])) {
