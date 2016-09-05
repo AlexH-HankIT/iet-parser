@@ -361,6 +361,15 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         return $this->lastAddedLun;
     }
 
+    public function exists()
+    {
+        if ($this->targetId === false) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
      * Find a target definition
      *
