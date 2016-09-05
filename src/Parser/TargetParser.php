@@ -356,7 +356,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function getLastAddedLun()
     {
-        return $this->getLastAddedLun();
+        return $this->lastAddedLun;
     }
 
     /**
