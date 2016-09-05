@@ -247,13 +247,15 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      *
      * @return $this
      */
-    public function addLun($path, $type = 'fileio', $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
+    public function addLun($path, $type = null, $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
         $this->_existsOrDie();
 
-        $params['type'] = 'Type=' . $type;
-
         $params['path'] = 'Path=' . $path;
+
+        if (isset($type)) {
+            $params['type'] = 'Type=' . $type;
+        }
 
         if(isset($scsiId)) {
             $params['scsiId'] = 'ScsiId=' . $scsiId;
