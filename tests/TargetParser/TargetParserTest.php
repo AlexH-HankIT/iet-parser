@@ -343,16 +343,20 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         return [
             ['case1_files', 'iet.sample.conf',
                 [
-                    'id' => '1',
-                    'type' => 'blockio',
-                    'path' => '/dev/VG_Datastore03/LV_server2'
+                    0 => [
+                        'id' => '1',
+                        'type' => 'blockio',
+                        'path' => '/dev/VG_Datastore03/LV_server2'
+                    ]
                 ]
             ],
             ['case2_files', 'iet.sample.conf',
                 [
-                    'id' => '0',
-                    'type' => 'fileio',
-                    'path' => '/dev/VG_Datastore02/LV_server2'
+                    0 => [
+                        'id' => '0',
+                        'type' => 'fileio',
+                        'path' => '/dev/VG_Datastore02/LV_server2'
+                    ]
                 ]
             ]
         ];
@@ -374,7 +378,7 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
         $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
-            $data = $parser->getLun($expectedData['id']);
+            $data = $parser->getLun($expectedData[0]['id']);
 
             $this->assertEquals(collect($expectedData), $data);
         } else {

@@ -198,8 +198,6 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      * @param bool $id
      *
      * @return Collection|boolean
-     *
-     * @throws NotFoundException
      */
     public function getLun($id = false)
     {
@@ -218,8 +216,12 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
                         $luns[$i][strtolower($temp[0])] = $temp[1];
                     }
 
-                    if ($id == $lun[1]) {
-                        return collect($luns[$i]);
+                    if ($id !== false && $id == $lun[1]) {
+                        // preserve format in comparison
+                        // to multiple luns
+                        $data[0] = $luns[$i];
+
+                        return collect($data);
                     }
                 }
             }
@@ -299,7 +301,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     public function deleteLun($id)
     {
         // this will throw a NotFoundException, if the lun does not exist
-        $this->getLun($id);
+        $this->_lunExistsOrDie($id);
 
         for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
@@ -513,6 +515,15 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     {
         if ($this->targetId === false) {
             throw new NotFoundException('The target ' . $this->target . ' was not found');
+        }
+    }
+
+    private function _lunExistsOrDie($id)
+    {
+        $data = $this->getLun($id);
+
+        if ($data === false) {
+            throw new NotFoundException('The lun ' . $id . ' was not found on ' . $this->target);
         }
     }
 }
