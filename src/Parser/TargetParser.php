@@ -218,17 +218,22 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
                         $luns[$i][strtolower($temp[0])] = $temp[1];
                     }
 
-                    if ($id !== false && $id == $lun[1]) {
+                    if ($id == $lun[1]) {
                         return collect($luns[$i]);
                     }
                 }
             }
         }
 
-        if (empty($luns) && $id === false) {
+        // method should return specific lun
+        // but it was not found
+        if ($id !== false) {
             return false;
-        } else if (empty($luns)) {
-            throw new NotFoundException('Lun ' . $id . ' was not found');
+        // method should return all luns
+        // but none where found
+        } else if (empty($luns) && $id === false) {
+            return false;
+        // return all luns
         } else {
             return collect($luns)->values();
         }
