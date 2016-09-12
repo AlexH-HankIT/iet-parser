@@ -386,20 +386,22 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     {
         $id = $this->findFirstTargetDefinition($this->fileContent);
 
-        $lastKey = $this->fileContent->keys()->last();
+        if ($id !== false) {
+            $lastKey = $this->fileContent->keys()->last();
 
-        for ($i = $id; $i <= $lastKey; $i++) {
-            if ($this->fileContent->has($i)) {
-                if ($this->fileContent->get($i) === 'Target ' . $this->target) {
-                    return $i;
+            for ($i = $id; $i <= $lastKey; $i++) {
+                if ($this->fileContent->has($i)) {
+                    if ($this->fileContent->get($i) === 'Target ' . $this->target) {
+                        return $i;
+                    }
                 }
-            }
 
-            // So here we are, last line
-            // This means we didn't find the index
-            // So let's throw an exception here and go home
-            if ($i === $lastKey) {
-                return false;
+                // So here we are, last line
+                // This means we didn't find the index
+                // So let's throw an exception here and go home
+                if ($i === $lastKey) {
+                    return false;
+                }
             }
         }
 
