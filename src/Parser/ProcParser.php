@@ -49,6 +49,13 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     private $id;
 
     /**
+     * Indicates if the file is empty
+     *
+     * @var bool
+     */
+    private $empty = false;
+
+    /**
      * By default this class returns the iqn
      * as array/collection index. If this
      * is set to true. The tid will be
@@ -63,13 +70,13 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
         parent::__construct($filesystem, $filePath, $target);
 
         if ($this->fileContent->isEmpty()) {
-            throw new ParserErrorException('The file is empty');
+            $this->empty = true;
+        } else {
+            // remove spaces and the ending/beginning
+            $this->fileContent->transform(function ($line, $key) {
+                return trim($line);
+            });
         }
-
-        // remove spaces and the ending/beginning
-        $this->fileContent->transform(function ($line, $key) {
-            return trim($line);
-        });
     }
 
     /**
@@ -80,10 +87,14 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      *
      * @throws ParserErrorException
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection|bool
      */
     public function getSession($target = false)
     {
+        if ($this->empty) {
+            return false;
+        }
+
         if (is_int($target)) {
             return collect($this->_parseSession(true)->get($target));
         } else if ($target === false) {
@@ -94,8 +105,22 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
         }
     }
 
+    /**
+     * Read the volume file normally found /proc/net/iet/volume.
+     * And return the information as a collection for easy use.
+     *
+     * @param int|string|boolean $target iqn or tid of the target
+     *
+     * @throws ParserErrorException
+     *
+     * @return bool|\Illuminate\Support\Collection
+     */
     public function getVolume($target = false)
     {
+        if ($this->empty) {
+            return false;
+        }
+
         if (is_int($target)) {
             return collect($this->_parseVolume(true)->get($target));
         } else if ($target === false) {
