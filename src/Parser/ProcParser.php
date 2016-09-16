@@ -135,10 +135,14 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      * Setter for the $tidIndex property
      *
      * @param $tidIndex boolean tidIndex
+     *
+     * @return $this
      */
     public function setTidIndex($tidIndex)
     {
         $this->tidIndex = $tidIndex;
+
+        return $this;
     }
 
     /**
