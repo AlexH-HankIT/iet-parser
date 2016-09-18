@@ -156,7 +156,13 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      */
     public function volumeExists()
     {
-        // ToDo
+        $data = $this->getVolume();
+
+        if ($data === false) {
+            return false;
+        }
+
+        return isset($data[$this->target]);
     }
 
     /**
@@ -166,7 +172,13 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      */
     public function sessionExists($sid)
     {
-        // ToDo
+        $data = $this->getSession();
+
+        if ($data === false) {
+            return false;
+        }
+
+        return isset($data[$this->target]);
     }
 
     /**
