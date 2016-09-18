@@ -14,12 +14,12 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
-use League\Flysystem\FilesystemInterface;
-use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
-use MrCrankHank\IetParser\Exceptions\NotFoundException;
-use MrCrankHank\IetParser\Exceptions\ParserErrorException;
-use MrCrankHank\IetParser\Interfaces\AclParserInterface;
+use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
+use MrCrankHank\IetParser\Interfaces\AclParserInterface;
+use MrCrankHank\IetParser\Exceptions\ParserErrorException;
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 
 /**
  * Class AclParser
@@ -39,11 +39,12 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     /**
      * AclParser constructor.
      *
+     * @param FileInterface       $file
      * @param null                $target
      */
-    public function __construct($target = null)
+    public function __construct(FileInterface $file, $target = null)
     {
-        parent::__construct($target);
+        parent::__construct($file, $target);
 
         $this->targetId = $this->_findIqn();
     }

@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 interface TargetParserInterface
 {
-    public function __construct($target = null);
+    public function __construct(FileInterface $file, $target = null);
 
     public function addTarget();
 
@@ -35,6 +35,4 @@ interface TargetParserInterface
     public function getLastAddedLun();
 
     public function exists();
-
-    public function setFileContent(Collection $fileContent);
 }

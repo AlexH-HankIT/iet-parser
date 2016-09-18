@@ -52,8 +52,10 @@ trait TestTrait {
         // for testing purposes: copy the sample file. So we don't change the real data
         $filesystem->copy($sourceFile, self::$testFile);
 
+        $file = (new File)->readContent($filesystem, self::$testFile);
+
         // create normalizer instance
-        $normalizer = new Normalizer($filesystem, self::$testFile);
+        $normalizer = new Normalizer($file);
 
         // normalize the file
         $normalizer->write();

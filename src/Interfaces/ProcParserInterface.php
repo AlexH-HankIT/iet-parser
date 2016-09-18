@@ -2,11 +2,9 @@
 
 namespace MrCrankHank\IetParser\Interfaces;
 
-use Illuminate\Support\Collection;
-
 interface ProcParserInterface
 {
-    public function __construct($target = null);
+    public function __construct(FileInterface $file, $target = null);
 
     public function getSession();
 
@@ -15,8 +13,6 @@ interface ProcParserInterface
     public function setTidIndex($tidIndex);
 
     public function getTidIndex();
-
-    public function setFileContent(Collection $fileContent);
 
     public function volumeExists();
 

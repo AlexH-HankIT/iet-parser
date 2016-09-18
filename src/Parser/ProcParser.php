@@ -14,10 +14,10 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
-use MrCrankHank\IetParser\Exceptions\ParserErrorException;
+use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 use MrCrankHank\IetParser\Interfaces\ProcParserInterface;
-use League\Flysystem\FilesystemInterface;
+use MrCrankHank\IetParser\Exceptions\ParserErrorException;
 
 /**
  * Class ProcParser
@@ -65,9 +65,9 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      */
     private $tidIndex = false;
 
-    public function __construct($target = null)
+    public function __construct(FileInterface $file, $target = null)
     {
-        parent::__construct($target);
+        parent::__construct($file, $target);
 
         if ($this->fileContent->isEmpty()) {
             $this->empty = true;
@@ -82,8 +82,6 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     /**
      * Read the session file normally found in /proc/net/iet/session.
      * And return the information as a collection for easy use.
-     *
-     * @param int|string|boolean $target iqn or tid of the target
      *
      * @throws ParserErrorException
      *
@@ -108,8 +106,6 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     /**
      * Read the volume file normally found /proc/net/iet/volume.
      * And return the information as a collection for easy use.
-     *
-     * @param int|string|boolean $target iqn or tid of the target
      *
      * @throws ParserErrorException
      *

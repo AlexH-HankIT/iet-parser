@@ -15,6 +15,7 @@
 namespace MrCrankHank\IetParser\Parser;
 
 use Illuminate\Support\Collection;
+use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Interfaces\TargetParserInterface;
@@ -52,11 +53,13 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
     /**
      * TargetParser constructor.
+     *
+     * @param FileInterface       $file
      * @param string              $target
      */
-    public function __construct($target = null)
+    public function __construct(FileInterface $file, $target = null)
     {
-        parent::__construct($target);
+        parent::__construct($file, $target);
 
         $this->targetId = $this->findTargetDefinition();
         $this->nextTargetId = $this->findNextTargetDefinition();
