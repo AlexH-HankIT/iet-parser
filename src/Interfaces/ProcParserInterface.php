@@ -2,17 +2,23 @@
 
 namespace MrCrankHank\IetParser\Interfaces;
 
-use League\Flysystem\FilesystemInterface;
+use Illuminate\Support\Collection;
 
 interface ProcParserInterface
 {
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null);
+    public function __construct($target = null);
 
-    public function getSession($target = false);
+    public function getSession();
 
-    public function getVolume($target = false);
+    public function getVolume();
 
     public function setTidIndex($tidIndex);
 
     public function getTidIndex();
+
+    public function setFileContent(Collection $fileContent);
+
+    public function volumeExists();
+
+    public function sessionExists($sid);
 }

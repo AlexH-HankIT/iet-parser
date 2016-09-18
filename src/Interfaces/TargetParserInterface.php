@@ -2,11 +2,11 @@
 
 namespace MrCrankHank\IetParser\Interfaces;
 
-use League\Flysystem\FilesystemInterface;
+use Illuminate\Support\Collection;
 
 interface TargetParserInterface
 {
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null);
+    public function __construct($target = null);
 
     public function addTarget();
 
@@ -31,4 +31,10 @@ interface TargetParserInterface
     public function addIncomingUser($user, $password);
 
     public function deleteIncomingUser($user, $password);
+
+    public function getLastAddedLun();
+
+    public function exists();
+
+    public function setFileContent(Collection $fileContent);
 }

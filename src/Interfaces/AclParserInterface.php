@@ -2,15 +2,17 @@
 
 namespace MrCrankHank\IetParser\Interfaces;
 
-use League\Flysystem\FilesystemInterface;
+use Illuminate\Support\Collection;
 
 interface AclParserInterface
 {
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null);
+    public function __construct($target = null);
 
     public function add($add);
 
     public function delete($delete);
 
     public function get($all = false);
+
+    public function setFileContent(Collection $fileContent);
 }

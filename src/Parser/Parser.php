@@ -29,7 +29,7 @@ use MrCrankHank\IetParser\Interfaces\ParserInterface;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class Parser implements ParserInterface
+abstract class Parser implements ParserInterface
 {
     /**
      * Contains a Filesystem instance
@@ -85,16 +85,11 @@ class Parser implements ParserInterface
     /**
      * Parser constructor.
      *
-     * @param FilesystemInterface $filesystem Filesystem instance
-     * @param string              $filePath   Path to the file
      * @param string              $target     IQN
      */
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
+    public function __construct($target = null)
     {
-        $this->filesystem = $filesystem;
-        $this->filePath = $filePath;
         $this->target = $target;
-        $this->fileContent = $this->read();
     }
 
     /**
@@ -104,11 +99,13 @@ class Parser implements ParserInterface
      */
     public function read()
     {
-        $fileContent = $this->readRaw();
+        if ($this->filesystem) {
+            $fileContent = $this->readRaw();
 
-        $fileContent = $this->_handleComments($fileContent);
+            $fileContent = $this->_handleComments($fileContent);
 
-        return $fileContent;
+            return $fileContent;
+        }
     }
 
     /**
@@ -118,11 +115,13 @@ class Parser implements ParserInterface
      */
     public function readRaw()
     {
-        $fileContent = $this->filesystem->read($this->filePath);
+        if ($this->filesystem) {
+            $fileContent = $this->filesystem->read($this->filePath);
 
-        $this->originalContent = $fileContent;
+            $this->originalContent = $fileContent;
 
-        return collect(explode("\n", $fileContent));
+            return collect(explode("\n", $fileContent));
+        }
     }
 
     /**
@@ -133,31 +132,33 @@ class Parser implements ParserInterface
      */
     public function write()
     {
-        // convert collections to arrays
-        $fileContent = $this->fileContent->all();
-        $comments = $this->comments->all();
+        if ($this->filesystem) {
+            // convert collections to arrays
+            $fileContent = $this->fileContent->all();
+            $comments = $this->comments->all();
 
-        if (isset($fileContent['new'])) {
-            // save new line to variable and delete it from the array
-            // so ksort can sort the indexes numerically
-            $new = $fileContent['new'];
-            unset($fileContent['new']);
+            if (isset($fileContent['new'])) {
+                // save new line to variable and delete it from the array
+                // so ksort can sort the indexes numerically
+                $new = $fileContent['new'];
+                unset($fileContent['new']);
+            }
+
+            // merge config with comments
+            $fileContent = $fileContent + $comments;
+
+            // sort the array, so the lines are correct
+            ksort($fileContent);
+
+            if (!empty($new)) {
+                // push the new line as first item
+                array_unshift($fileContent, $new);
+            }
+
+            $fileContent = implode("\n", $fileContent);
+
+            $this->filesystem->update($this->filePath, $fileContent);
         }
-
-        // merge config with comments
-        $fileContent = $fileContent + $comments;
-
-        // sort the array, so the lines are correct
-        ksort($fileContent);
-
-        if (!empty($new)) {
-            // push the new line as first item
-            array_unshift($fileContent, $new);
-        }
-
-        $fileContent = implode("\n", $fileContent);
-
-        $this->filesystem->update($this->filePath, $fileContent);
     }
 
     /**
@@ -169,7 +170,9 @@ class Parser implements ParserInterface
      */
     public function writeRaw($string)
     {
-        $this->filesystem->update($this->filePath, $string);
+        if ($this->filesystem) {
+            $this->filesystem->update($this->filePath, $string);
+        }
     }
 
     /**
@@ -179,7 +182,39 @@ class Parser implements ParserInterface
      */
     public function refresh()
     {
+        if ($this->filesystem) {
+            $this->fileContent = $this->read();
+        }
+    }
+
+    /**
+     * Read a file via the filesystem
+     *
+     * @param FilesystemInterface $filesystem
+     * @param                     $filePath
+     */
+    public function readFileContent(FilesystemInterface $filesystem, $filePath)
+    {
+        $this->filesystem = $filesystem;
+        $this->filePath = $filePath;
         $this->fileContent = $this->read();
+    }
+
+    /**
+     * Set the file's content. So the class can be used
+     * without an active filesystem connection.
+     *
+     * This function should be used, if the data was
+     * already retrieved via this class and stored
+     * somewhere (Caching for example).
+     *
+     * Of course, if the data is provided via this way
+     * modifications are not possible.
+     *
+     * @param $fileContent
+     */
+    public function setFileContent(Collection $fileContent) {
+        $this->fileContent = $fileContent;
     }
 
     /**

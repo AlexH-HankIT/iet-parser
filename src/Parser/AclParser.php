@@ -39,13 +39,11 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     /**
      * AclParser constructor.
      *
-     * @param FilesystemInterface $filesystem
-     * @param string              $filePath
      * @param null                $target
      */
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
+    public function __construct($target = null)
     {
-        parent::__construct($filesystem, $filePath, $target);
+        parent::__construct($target);
 
         $this->targetId = $this->_findIqn();
     }
@@ -127,7 +125,7 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
      * Get single or multiple acls
      *
      * @param bool $all
-     * @return \Illuminate\Support\Collection|static
+     * @return \Illuminate\Support\Collection
      */
     public function get($all = false)
     {
@@ -175,7 +173,7 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     /**
      * Get single acl
      *
-     * @return \Illuminate\Support\Collection|static
+     * @return \Illuminate\Support\Collection
      * @throws ParserErrorException
      */
     private function _getSingle()
@@ -188,7 +186,7 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
 
         // explode array by comma we get everything
         // here except the first acl because
-        // it is not separated by a comma
+        // it is not separated with a comma
         $acls = collect(explode(',', $line));
 
         // explode first item line to get the

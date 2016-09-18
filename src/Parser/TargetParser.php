@@ -14,13 +14,12 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
-use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
-use MrCrankHank\IetParser\Exceptions\NotFoundException;
-use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
 use Illuminate\Support\Collection;
-use League\Flysystem\FilesystemInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Interfaces\TargetParserInterface;
+use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 
 /**
  * Class TargetParser
@@ -53,13 +52,11 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
     /**
      * TargetParser constructor.
-     * @param FilesystemInterface $filesystem
-     * @param string              $filePath
      * @param string              $target
      */
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
+    public function __construct($target = null)
     {
-        parent::__construct($filesystem, $filePath, $target);
+        parent::__construct($target);
 
         $this->targetId = $this->findTargetDefinition();
         $this->nextTargetId = $this->findNextTargetDefinition();
