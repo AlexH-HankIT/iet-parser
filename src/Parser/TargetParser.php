@@ -201,6 +201,11 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function getLun($id = false)
     {
+        // Workaround if there is only one target
+        if ($this->nextTargetId === false) {
+            $this->nextTargetId = $this->fileContent->count();
+        }
+
         for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
                 if (substr($this->fileContent->get($i), 0, 4) === 'Lun ') {
