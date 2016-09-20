@@ -2,8 +2,9 @@
 
 namespace MrCrankHank\IetParser\OptionParserDelete;
 
-use MrCrankHank\IetParser\TestTrait;
 use PHPUnit_Framework_TestCase;
+use MrCrankHank\IetParser\File;
+use MrCrankHank\IetParser\TestTrait;
 use MrCrankHank\IetParser\Parser\GlobalOptionParser;
 
 class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
@@ -30,7 +31,9 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->delete('IncomingUser user2 password2')->write();
@@ -63,7 +66,9 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->delete('This wont be found')->write();
@@ -93,7 +98,9 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->deleteIncomingUser('user2', 'password2')->write();
@@ -125,7 +132,9 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->deleteOutgoingUser('user2', 'password2')->write();

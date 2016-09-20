@@ -2,9 +2,10 @@
 
 namespace MrCrankHank\IetParser\AclParser;
 
-use MrCrankHank\IetParser\Parser\AclParser;
-use MrCrankHank\IetParser\TestTrait;
 use PHPUnit_Framework_TestCase;
+use MrCrankHank\IetParser\TestTrait;
+use MrCrankHank\IetParser\Parser\AclParser;
+use MrCrankHank\IetParser\File;
 
 /**
  * Class AclParserTest
@@ -38,7 +39,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $parser->add($acl)->write();
@@ -71,7 +74,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $parser->add($acl)->write();
@@ -103,7 +108,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $parser->delete($acl)->write();
@@ -136,7 +143,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $parser->delete($acl)->write();
@@ -168,7 +177,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $parser->delete($acl)->write();
@@ -242,7 +253,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $data = $parser->get($all);
@@ -275,7 +288,9 @@ class AclParserTest extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new AclParser($objects['filesystem'], self::$testFile, $iqn);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new AclParser($file, $iqn);
 
         if ($objects['normalizer']->check()) {
             $parser->get($all);

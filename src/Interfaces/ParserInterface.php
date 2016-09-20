@@ -2,11 +2,9 @@
 
 namespace MrCrankHank\IetParser\Interfaces;
 
-use League\Flysystem\FilesystemInterface;
-
 interface ParserInterface
 {
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null);
+    public function __construct(FileInterface $file, $target = null);
 
     public function read();
 
@@ -15,4 +13,6 @@ interface ParserInterface
     public function write();
 
     public function writeRaw($string);
+
+    public function refresh();
 }

@@ -14,10 +14,10 @@
 
 namespace MrCrankHank\IetParser\Parser;
 
-use MrCrankHank\IetParser\Exceptions\ParserErrorException;
+use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 use MrCrankHank\IetParser\Interfaces\ProcParserInterface;
-use League\Flysystem\FilesystemInterface;
+use MrCrankHank\IetParser\Exceptions\ParserErrorException;
 
 /**
  * Class ProcParser
@@ -65,9 +65,9 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      */
     private $tidIndex = false;
 
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
+    public function __construct(FileInterface $file, $target = null)
     {
-        parent::__construct($filesystem, $filePath, $target);
+        parent::__construct($file, $target);
 
         if ($this->fileContent->isEmpty()) {
             $this->empty = true;
@@ -83,25 +83,23 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      * Read the session file normally found in /proc/net/iet/session.
      * And return the information as a collection for easy use.
      *
-     * @param int|string|boolean $target iqn or tid of the target
-     *
      * @throws ParserErrorException
      *
      * @return \Illuminate\Support\Collection|bool
      */
-    public function getSession($target = false)
+    public function getSession()
     {
         if ($this->empty) {
             return false;
         }
 
-        if (is_int($target)) {
-            return collect($this->_parseSession(true)->get($target));
-        } else if ($target === false) {
+        if (is_int($this->target)) {
+            return collect($this->_parseSession(true)->get($this->target));
+        } else if (is_null($this->target)) {
             return $this->_parseSession($this->tidIndex);
         } else {
             // if target is not a boolean or integer, it has to be a string aka iqn
-            return collect($this->_parseSession(false)->get($target));
+            return collect($this->_parseSession(false)->get($this->target));
         }
     }
 
@@ -109,25 +107,23 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      * Read the volume file normally found /proc/net/iet/volume.
      * And return the information as a collection for easy use.
      *
-     * @param int|string|boolean $target iqn or tid of the target
-     *
      * @throws ParserErrorException
      *
      * @return bool|\Illuminate\Support\Collection
      */
-    public function getVolume($target = false)
+    public function getVolume()
     {
         if ($this->empty) {
             return false;
         }
 
-        if (is_int($target)) {
-            return collect($this->_parseVolume(true)->get($target));
-        } else if ($target === false) {
+        if (is_int($this->target)) {
+            return collect($this->_parseVolume(true)->get($this->target));
+        } else if (is_null($this->target)) {
             return $this->_parseVolume($this->tidIndex);
         } else {
             // if target is not a boolean or integer, it has to be a string aka iqn
-            return collect($this->_parseVolume(false)->get($target));
+            return collect($this->_parseVolume(false)->get($this->target));
         }
     }
 
@@ -153,6 +149,36 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     public function getTidIndex()
     {
         return $this->tidIndex;
+    }
+
+    /**
+     * @return bool
+     */
+    public function volumeExists()
+    {
+        $data = $this->getVolume();
+
+        if ($data === false) {
+            return false;
+        }
+
+        return isset($data[$this->target]);
+    }
+
+    /**
+     * @param $sid
+     *
+     * @return bool
+     */
+    public function sessionExists($sid)
+    {
+        $data = $this->getSession();
+
+        if ($data === false) {
+            return false;
+        }
+
+        return isset($data[$this->target]);
     }
 
     /**

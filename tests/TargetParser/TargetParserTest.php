@@ -2,11 +2,12 @@
 
 namespace MrCrankHank\IetParser\TargetParser;
 
+use MrCrankHank\IetParser\File;
 use MrCrankHank\IetParser\TestTrait;
 use PHPUnit_Framework_TestCase;
 use MrCrankHank\IetParser\Parser\TargetParser;
 
-class TargetParserDelete extends PHPUnit_Framework_TestCase
+class TargetParserTest extends PHPUnit_Framework_TestCase
 {
     use TestTrait;
 
@@ -25,21 +26,22 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
      *
      * @dataProvider addTargetProvider
      */
-    public function testAddTarget($dir, $sourceFile, $expectedFile)
-    {
-            $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+    public function testAddTarget($dir, $sourceFile, $expectedFile) {
+        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
 
-            $objects = $this->normalize($dir, $sourceFile);
+        $objects = $this->normalize($dir, $sourceFile);
 
-            $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:testAdd');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
 
-            if ($objects['normalizer']->check()) {
-                $parser->addTarget()->write();
-            } else {
-                $this->fail("The normalizer did not properly normalize the file!");
-            }
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:testAdd');
 
-            $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        if ($objects['normalizer']->check()) {
+            $parser->addTarget()->write();
+        } else {
+            $this->fail("The normalizer did not properly normalize the file!");
+        }
+
+        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
     }
 
     public static function addTargetDuplicationErrorProvider()
@@ -64,7 +66,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->addTarget()->write();
@@ -94,7 +98,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:delete');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:delete');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteTarget()->write();
@@ -127,7 +133,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:notFound');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:notFound');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteTarget()->write();
@@ -158,7 +166,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteTarget()->write();
@@ -188,7 +198,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->addOption('This is a awesome option')->write();
@@ -220,7 +232,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server17');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server17');
 
         if ($objects['normalizer']->check()) {
             $parser->addOption('ImmediateData No')->write();
@@ -253,7 +267,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:notFound');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:notFound');
 
         if ($objects['normalizer']->check()) {
             $parser->addOption('This is a awesome option')->write();
@@ -283,7 +299,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:ex');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:ex');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteOption('MaxBurstLength')->write();
@@ -327,7 +345,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $data = $parser->getOptions();
@@ -375,7 +395,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $data = $parser->getLun($expectedData[0]['id']);
@@ -433,7 +455,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server18');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server18');
 
         if ($objects['normalizer']->check()) {
             $data = $parser->getLun();
@@ -465,7 +489,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->addLun('/dev/null', 'blockio')->write();
@@ -497,7 +523,9 @@ class TargetParserDelete extends PHPUnit_Framework_TestCase
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new TargetParser($objects['filesystem'], self::$testFile, 'iqn.2016-08.test.ing.host:server1');
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteLun(0)->write();

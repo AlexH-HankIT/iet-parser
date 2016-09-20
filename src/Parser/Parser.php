@@ -18,6 +18,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use Illuminate\Support\Collection;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
+use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
@@ -29,29 +30,8 @@ use MrCrankHank\IetParser\Interfaces\ParserInterface;
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
  * @link     null
  */
-class Parser implements ParserInterface
+abstract class Parser implements ParserInterface
 {
-    /**
-     * Contains a Filesystem instance
-     *
-     * @var Filesystem
-     */
-    protected $filesystem;
-
-    /**
-     * Contains the file content
-     *
-     * @var
-     */
-    protected $fileContent;
-
-    /**
-     * Contains the file path
-     *
-     * @var
-     */
-    protected $filePath;
-
     /**
      * Contains the extracted comments
      * of the file
@@ -83,17 +63,27 @@ class Parser implements ParserInterface
     protected $targetId;
 
     /**
+     * @var FileInterface
+     */
+    protected $file;
+
+    /**
+     * @var
+     */
+    protected $fileContent;
+
+    /**
      * Parser constructor.
      *
-     * @param FilesystemInterface $filesystem Filesystem instance
-     * @param string              $filePath   Path to the file
-     * @param string              $target     IQN
+     * @param FileInterface        $file
+     * @param string               $target     IQN
      */
-    public function __construct(FilesystemInterface $filesystem, $filePath, $target = null)
+    public function __construct(FileInterface $file, $target = null)
     {
-        $this->filesystem = $filesystem;
-        $this->filePath = $filePath;
+        $this->file = $file;
+
         $this->target = $target;
+
         $this->fileContent = $this->read();
     }
 
@@ -114,11 +104,11 @@ class Parser implements ParserInterface
     /**
      * Retrieves the file's content exactly as it is
      *
-     * @return string
+     * @return Collection
      */
     public function readRaw()
     {
-        $fileContent = $this->filesystem->read($this->filePath);
+        $fileContent = $this->file->refresh()->getContent();
 
         $this->originalContent = $fileContent;
 
@@ -131,8 +121,7 @@ class Parser implements ParserInterface
      *
      * @return void
      */
-    public function write()
-    {
+    public function write() {
         // convert collections to arrays
         $fileContent = $this->fileContent->all();
         $comments = $this->comments->all();
@@ -157,7 +146,7 @@ class Parser implements ParserInterface
 
         $fileContent = implode("\n", $fileContent);
 
-        $this->filesystem->update($this->filePath, $fileContent);
+        $this->file->getFilesystem()->update($this->file->getFilePath(), $fileContent);
     }
 
     /**
@@ -169,7 +158,7 @@ class Parser implements ParserInterface
      */
     public function writeRaw($string)
     {
-        $this->filesystem->update($this->filePath, $string);
+        $this->file->getFilesystem()->update($this->file->getFilePath(), $string);
     }
 
     /**

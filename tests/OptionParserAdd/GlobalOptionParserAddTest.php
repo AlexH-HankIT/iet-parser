@@ -2,10 +2,11 @@
 
 namespace MrCrankHank\IetParser\OptionParserAdd;
 
-use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
-use MrCrankHank\IetParser\Parser\GlobalOptionParser;
 use PHPUnit_Framework_TestCase;
+use MrCrankHank\IetParser\File;
 use MrCrankHank\IetParser\TestTrait;
+use MrCrankHank\IetParser\Parser\GlobalOptionParser;
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 
 /**
  * Class GlobalOptionParserTestAdd
@@ -37,7 +38,9 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->add("IncomingUser user password")->write();
@@ -70,7 +73,9 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             try {
@@ -108,7 +113,9 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             try {
@@ -146,7 +153,9 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $parser = new GlobalOptionParser($objects['filesystem'], self::$testFile);
+        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+
+        $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             try {

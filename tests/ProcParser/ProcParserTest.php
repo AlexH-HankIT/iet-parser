@@ -2,11 +2,12 @@
 
 namespace MrCrankHank\IetParser\ProcParser;
 
-use MrCrankHank\IetParser\Parser\ProcParser;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\Filesystem;
-use MrCrankHank\IetParser\TestTrait;
 use PHPUnit_Framework_TestCase;
+use MrCrankHank\IetParser\File;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
+use MrCrankHank\IetParser\TestTrait;
+use MrCrankHank\IetParser\Parser\ProcParser;
 
 class ProcParserTest extends PHPUnit_Framework_TestCase
 {
@@ -76,11 +77,15 @@ class ProcParserTest extends PHPUnit_Framework_TestCase
 
         $filesystem = new Filesystem($local);
 
-        $parser = new ProcParser($filesystem, $file);
+        $file = (new File)->readContent($filesystem, $file);
 
-        $this->assertEquals($parser->getSession($target), collect($expectedData));
+        $parser = new ProcParser($file, $target);
 
-        $this->assertEquals($parser->getSession($tid), collect($expectedData));
+        $this->assertEquals($parser->getSession(), collect($expectedData));
+
+        $parser = new ProcParser($file, $tid);
+
+        $this->assertEquals($parser->getSession(), collect($expectedData));
     }
 
     public static function getSessionMultipleProvider()
@@ -104,7 +109,9 @@ class ProcParserTest extends PHPUnit_Framework_TestCase
 
         $filesystem = new Filesystem($local);
 
-        $parser = new ProcParser($filesystem, $file);
+        $file = (new File)->readContent($filesystem, $file);
+
+        $parser = new ProcParser($file);
 
         $this->assertEquals($parser->getSession(), collect($expectedData));
     }
@@ -167,11 +174,15 @@ class ProcParserTest extends PHPUnit_Framework_TestCase
 
         $filesystem = new Filesystem($local);
 
-        $parser = new ProcParser($filesystem, $file);
+        $file = (new File)->readContent($filesystem, $file);
 
-        $this->assertEquals($parser->getVolume($target), collect($expectedData));
+        $parser = new ProcParser($file, $target);
 
-        $this->assertEquals($parser->getVolume($tid), collect($expectedData));
+        $this->assertEquals($parser->getVolume(), collect($expectedData));
+
+        $parser = new ProcParser($file, $tid);
+
+        $this->assertEquals($parser->getVolume(), collect($expectedData));
     }
 
     public static function getVolumeMultipleProvider()
@@ -195,7 +206,9 @@ class ProcParserTest extends PHPUnit_Framework_TestCase
 
         $filesystem = new Filesystem($local);
 
-        $parser = new ProcParser($filesystem, $file);
+        $file = (new File)->readContent($filesystem, $file);
+
+        $parser = new ProcParser($file);
 
         $this->assertEquals($parser->getVolume(), collect($expectedData));
     }
