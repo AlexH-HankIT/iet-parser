@@ -497,18 +497,23 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
                 return 0;
             }
 
-            foreach ($luns as $key => $lun) {
-                if (isset($luns[$key + 1])) {
-                    if ($lun['id'] + 1 !== $luns[$key + 1]) {
-                        return $lun['id'] + 2;
-                    }
-                } else {
-                    return $lun['id'] + 1;
-                }
-            }
+            $ids = $luns->map(function($item, $key){
+                return $item['id'];
+            })->toArray();
 
-            return 0;
+            $max = max($ids);
+
+            $range = range(0, $max);
+
+            $ids = array_diff($range, $ids);
+
+            if (empty($ids)) {
+                return $max + 1;
+            } else {
+                return array_shift($ids);
+            }
         }
+
     }
 
     /**
