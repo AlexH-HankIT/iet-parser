@@ -464,7 +464,10 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
                     // Workaround, to detect luns correctly
                     if ($line[0] === 'Lun') {
-                        if (strpos($option, $line[0] . ' ' . $line[1]) !== false) {
+                        // The space after $line[1] is important
+                        // otherwiste Lun 3 would be replaced with
+                        // Lun 36 and so on :S
+                        if (strpos($option, $line[0] . ' ' . $line[1] . ' ') !== false) {
                             return $i;
                         }
                     } else {
