@@ -460,12 +460,12 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         } else {
             for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
                 if ($this->fileContent->has($i)) {
-                    $line = explode(" ", ($this->fileContent->get($i)));
+                    $line = explode(' ', ($this->fileContent->get($i)));
 
                     // Workaround, to detect luns correctly
                     if ($line[0] === 'Lun') {
                         // The space after $line[1] is important
-                        // otherwiste Lun 3 would be replaced with
+                        // otherwise Lun 3 would be replaced with
                         // Lun 36 and so on :S
                         if (strpos($option, $line[0] . ' ' . $line[1] . ' ') !== false) {
                             return $i;
