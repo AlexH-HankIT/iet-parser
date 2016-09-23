@@ -93,7 +93,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function deleteTarget()
     {
-        $this->_existsOrDie();
+        $this->_targetExistsOrFail();
 
         $options = $this->getOptions();
 
@@ -118,7 +118,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function addOption($option)
     {
-        $this->_existsOrDie();
+        $this->_targetExistsOrFail();
 
         $key = $this->isOptionSet($option);
 
@@ -146,7 +146,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function deleteOption($option)
     {
-        $this->_existsOrDie();
+        $this->_targetExistsOrFail();
 
         $options = $this->getOptions();
 
@@ -208,7 +208,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
         for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
-                if (substr($this->fileContent->get($i), 0, 4) === 'Lun ') {
+                if ($this->_detectLun($i, $id)) {
                     $lun = explode(' ', $this->fileContent->get($i));
 
                     $luns[$i]['id'] = $lun[1];
@@ -263,7 +263,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function addLun($path, $type = null, $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
-        $this->_existsOrDie();
+        $this->_targetExistsOrFail();
 
         $params['path'] = 'Path=' . $path;
 
@@ -306,11 +306,11 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     public function deleteLun($id)
     {
         // this will throw a NotFoundException, if the lun does not exist
-        $this->_lunExistsOrDie($id);
+        $this->_lunExistsOrFail($id);
 
         for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
-                if (substr($this->fileContent->get($i), 0, 5) === 'Lun ' . $id) {
+                if ($this->_detectLun($i, $id)) {
                     $this->fileContent->forget($i);
                 }
             }
@@ -451,7 +451,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     protected function isOptionSet($option)
     {
-        $this->_existsOrDie();
+        $this->_targetExistsOrFail();
 
         $options = $this->getOptions();
 
@@ -526,19 +526,24 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      *
      * @return void
      */
-    private function _existsOrDie()
+    private function _targetExistsOrFail()
     {
         if ($this->targetId === false) {
             throw new NotFoundException('The target ' . $this->target . ' was not found');
         }
     }
 
-    private function _lunExistsOrDie($id)
+    private function _lunExistsOrFail($id)
     {
         $data = $this->getLun($id);
 
         if ($data === false) {
             throw new NotFoundException('The lun ' . $id . ' was not found on ' . $this->target);
         }
+    }
+
+    private function _detectLun($position, $lunId)
+    {
+        return substr($this->fileContent->get($position), 0, 4 + strlen($lunId)) === 'Lun ' . $lunId;
     }
 }
