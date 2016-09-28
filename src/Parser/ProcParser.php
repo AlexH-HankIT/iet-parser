@@ -229,7 +229,7 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
 
                 $this->id = $sid[1];
 
-                $data[$this->index][$this->id]['cid'] = $sid[1];
+                $data[$this->index][$this->id]['sid'] = $sid[1];
                 $data[$this->index][$this->id]['initiator'] = $initiator[1];
             }
 
