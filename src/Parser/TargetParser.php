@@ -266,7 +266,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function addLun($path, $type = null, $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
-        $this->_targetExistsOrFail();
+        $this->targetExistsOrFail();
 
         $params['path'] = 'Path=' . $path;
 
