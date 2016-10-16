@@ -70,9 +70,9 @@ class Normalizer extends Parser implements ParserInterface, NormalizerInterface
 
             if ($position !== 0 && $position !== false) {
                 return trim(substr_replace($line, '', $position), ' ');
-            } else {
-                return $line;
             }
+
+            return $line;
         });
 
         return ['fileContentString' => implode("\n", $fileContent->all()), 'originalFileContentString' => implode("\n", $originalFileContent->all())];
@@ -112,8 +112,8 @@ class Normalizer extends Parser implements ParserInterface, NormalizerInterface
 
         if (strcmp($data['originalFileContentString'], $data['fileContentString']) !== 0) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 }

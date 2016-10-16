@@ -74,11 +74,11 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function addTarget()
     {
-        if ($this->targetId === false) {
-            $this->fileContent->push('Target ' . $this->target, 'new');
-        } else {
+        if ($this->targetId !== false) {
             throw new DuplicationErrorException('The target ' . $this->target . ' already exists');
         }
+
+        $this->fileContent->push('Target ' . $this->target, 'new');
 
         return $this;
     }
@@ -93,15 +93,16 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function deleteTarget()
     {
-        $this->_existsOrDie();
+        $this->existsOrDie();
 
         $options = $this->getOptions();
 
-        if ($options === false) {
-            $this->fileContent->forget($this->targetId);
-        } else {
+        if ($options !== false) {
             throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
+
         }
+
+        $this->fileContent->forget($this->targetId);
 
         return $this;
     }
@@ -118,7 +119,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function addOption($option)
     {
-        $this->_existsOrDie();
+        $this->existsOrDie();
 
         $key = $this->isOptionSet($option);
 
@@ -146,22 +147,22 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function deleteOption($option)
     {
-        $this->_existsOrDie();
+        $this->existsOrDie();
 
         $options = $this->getOptions();
 
         if ($options === false) {
             throw new NotFoundException('The target ' . $this->target . ' has no options');
-        } else {
-            $key = $this->isOptionSet($option);
-
-            if ($key === false) {
-                throw new NotFoundException('The option ' . $option . ' was not found');
-            } else {
-                $this->fileContent->forget($key);
-                return $this;
-            }
         }
+
+        $key = $this->isOptionSet($option);
+
+        if ($key === false) {
+            throw new NotFoundException('The option ' . $option . ' was not found');
+        }
+
+        $this->fileContent->forget($key);
+        return $this;
     }
 
     /**
@@ -187,9 +188,9 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
         if (empty($options)) {
             return false;
-        } else {
-            return collect(array_values($options));
         }
+
+        return collect(array_values($options));
     }
 
     /**
@@ -231,14 +232,16 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         // but it was not found
         if ($id !== false) {
             return false;
+        }
+
         // method should return all luns
         // but none where found
-        } else if (empty($luns) && $id === false) {
+        if (empty($luns) && $id === false) {
             return false;
-        // return all luns
-        } else {
-            return collect($luns)->values();
         }
+
+        // return all luns
+        return collect($luns)->values();
     }
 
     /**
@@ -258,7 +261,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     public function addLun($path, $type = null, $scsiId = null, $scsiSN = null, $ioMode = null, $blockSize = null)
     {
-        $this->_existsOrDie();
+        $this->existsOrDie();
 
         $params['path'] = 'Path=' . $path;
 
@@ -301,7 +304,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     public function deleteLun($id)
     {
         // this will throw a NotFoundException, if the lun does not exist
-        $this->_lunExistsOrDie($id);
+        $this->lunExistsOrDie($id);
 
         for ($i = $this->targetId; $i < $this->nextTargetId; $i++) {
             if ($this->fileContent->has($i)) {
@@ -372,9 +375,9 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     {
         if ($this->targetId === false) {
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /**
@@ -390,10 +393,8 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
             $lastKey = $this->fileContent->keys()->last();
 
             for ($i = $id; $i <= $lastKey; $i++) {
-                if ($this->fileContent->has($i)) {
-                    if ($this->fileContent->get($i) === 'Target ' . $this->target) {
-                        return $i;
-                    }
+                if ($this->fileContent->has($i) && $this->fileContent->get($i) === 'Target ' . $this->target) {
+                    return $i;
                 }
 
                 // So here we are, last line
@@ -446,7 +447,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      */
     protected function isOptionSet($option)
     {
-        $this->_existsOrDie();
+        $this->existsOrDie();
 
         $options = $this->getOptions();
 
@@ -485,25 +486,25 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     {
         if ($this->targetId === false) {
             return false;
-        } else {
-            $luns = $this->getLun();
+        }
 
-            if ($luns === false) {
-                return 0;
-            }
+        $luns = $this->getLun();
 
-            foreach ($luns as $key => $lun) {
-                if (isset($luns[$key + 1])) {
-                    if ($lun['id'] + 1 !== $luns[$key + 1]) {
-                        return $lun['id'] + 2;
-                    }
-                } else {
-                    return $lun['id'] + 1;
-                }
-            }
-
+        if ($luns === false) {
             return 0;
         }
+
+        foreach ($luns as $key => $lun) {
+            if (isset($luns[$key + 1])) {
+                if ($lun['id'] + 1 !== $luns[$key + 1]) {
+                    return $lun['id'] + 2;
+                }
+            } else {
+                return $lun['id'] + 1;
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -513,14 +514,14 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      *
      * @return void
      */
-    private function _existsOrDie()
+    private function existsOrDie()
     {
         if ($this->targetId === false) {
             throw new NotFoundException('The target ' . $this->target . ' was not found');
         }
     }
 
-    private function _lunExistsOrDie($id)
+    private function lunExistsOrDie($id)
     {
         $data = $this->getLun($id);
 

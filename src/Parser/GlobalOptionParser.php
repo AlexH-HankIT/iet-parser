@@ -49,11 +49,12 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
         $id = $this->findGlobalOption($fileContent, $option);
 
         // Check if the option is already defined
-        if ($id === false) {
-            $fileContent->prepend($option, 'new');
-        } else {
+        if ($id !== false) {
             throw new DuplicationErrorException('The option ' . $option . ' is already set.');
+
         }
+
+        $fileContent->prepend($option, 'new');
 
         $this->fileContent = $fileContent;
 
@@ -79,13 +80,13 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
 
         if ($id === false) {
             throw new NotFoundException('The option ' . $option . ' was not found');
-        } else {
-            $fileContent->forget($id);
-
-            $this->fileContent = $fileContent;
-
-            return $this;
         }
+
+        $fileContent->forget($id);
+
+        $this->fileContent = $fileContent;
+
+        return $this;
     }
 
     /**

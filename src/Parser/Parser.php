@@ -139,7 +139,7 @@ abstract class Parser implements ParserInterface
         // sort the array, so the lines are correct
         ksort($fileContent);
 
-        if (!empty($new)) {
+        if (! empty($new)) {
             // push the new line as first item
             array_unshift($fileContent, $new);
         }
@@ -185,17 +185,17 @@ abstract class Parser implements ParserInterface
                 // save empty lines in comments array
                 $this->comments[$key] = $line;
                 return false;
-            } else {
-                // check for comments
-                $offset = stripos(preg_replace('/\s+/', '', $line), '#');
-                if ($offset !== false) {
-                    // extract the whole line if it's commented
-                    $this->comments[$key] = $line;
-                    return false;
-                } else {
-                    return true;
-                }
             }
+
+            // check for comments
+            $offset = stripos(preg_replace('/\s+/', '', $line), '#');
+            if ($offset !== false) {
+                // extract the whole line if it's commented
+                $this->comments[$key] = $line;
+                return false;
+            }
+
+            return true;
         });
 
         $this->comments = collect($this->comments);
@@ -223,10 +223,8 @@ abstract class Parser implements ParserInterface
         $id--;
 
         for ($i = 0; $i <= $id; $i++) {
-            if ($fileContent->has($i)) {
-                if ($fileContent->get($i) === $option) {
-                    return $i;
-                }
+            if ($fileContent->has($i) && $fileContent->get($i) === $option) {
+                return $i;
             }
 
             // So here we are, last line

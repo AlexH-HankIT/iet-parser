@@ -94,13 +94,15 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
         }
 
         if (is_int($this->target)) {
-            return collect($this->_parseSession(true)->get($this->target));
-        } else if (is_null($this->target)) {
-            return $this->_parseSession($this->tidIndex);
-        } else {
-            // if target is not a boolean or integer, it has to be a string aka iqn
-            return collect($this->_parseSession(false)->get($this->target));
+            return collect($this->parseSession(true)->get($this->target));
         }
+
+        if (is_null($this->target)) {
+            return $this->parseSession($this->tidIndex);
+        }
+
+        // if target is not a boolean or integer, it has to be a string aka iqn
+        return collect($this->parseSession(false)->get($this->target));
     }
 
     /**
@@ -118,13 +120,14 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
         }
 
         if (is_int($this->target)) {
-            return collect($this->_parseVolume(true)->get($this->target));
-        } else if (is_null($this->target)) {
-            return $this->_parseVolume($this->tidIndex);
-        } else {
-            // if target is not a boolean or integer, it has to be a string aka iqn
-            return collect($this->_parseVolume(false)->get($this->target));
+            return collect($this->parseVolume(true)->get($this->target));
         }
+        if (is_null($this->target)) {
+            return $this->parseVolume($this->tidIndex);
+        }
+
+        // if target is not a boolean or integer, it has to be a string aka iqn
+        return collect($this->parseVolume(false)->get($this->target));
     }
 
     /**
@@ -195,7 +198,7 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
      *
      * @return mixed
      */
-    private function _parseSession($tidIndex)
+    private function parseSession($tidIndex)
     {
         foreach ($this->fileContent as $line) {
             if (substr($line, 0, 3) === 'tid') {
@@ -257,14 +260,14 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     }
 
     /**
-     * Does the same as the _parseSession function,
+     * Does the same as the parseSession function,
      * but for volumes ;-)
      *
      * @param $tidIndex
      * @return \Illuminate\Support\Collection
      * @throws ParserErrorException
      */
-    private function _parseVolume($tidIndex)
+    private function parseVolume($tidIndex)
     {
         foreach ($this->fileContent as $line) {
             if (substr($line, 0, 3) === 'tid') {
