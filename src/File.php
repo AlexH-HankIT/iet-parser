@@ -1,29 +1,30 @@
 <?php
 
 /**
- * This file contains the File class
+ * This file contains the File class.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser;
 
 use League\Flysystem\FilesystemInterface;
 use MrCrankHank\IetParser\Interfaces\FileInterface;
 
 /**
- * Class File
+ * Class File.
  *
  * @category Parser
- * @package  MrCrankHank\IetParser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
 class File implements FileInterface
@@ -48,6 +49,7 @@ class File implements FileInterface
      *
      * @param FilesystemInterface $filesystem
      * @param                     $filePath
+     *
      * @return $this
      */
     public function readContent(FilesystemInterface $filesystem, $filePath)
@@ -79,6 +81,7 @@ class File implements FileInterface
      * Set the file content directly.
      *
      * @param $fileContent
+     *
      * @return $this
      */
     public function setContent($fileContent)

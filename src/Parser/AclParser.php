@@ -1,37 +1,38 @@
 <?php
 
 /**
- * This file contains the AclParser class
+ * This file contains the AclParser class.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser\Parser;
 
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
+use MrCrankHank\IetParser\Exceptions\ParserErrorException;
+use MrCrankHank\IetParser\Interfaces\AclParserInterface;
 use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
-use MrCrankHank\IetParser\Exceptions\NotFoundException;
-use MrCrankHank\IetParser\Interfaces\AclParserInterface;
-use MrCrankHank\IetParser\Exceptions\ParserErrorException;
-use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 
 /**
- * Class AclParser
+ * Class AclParser.
  *
  * Add/delete targets to/from the iet config file
  * Add/delete options to/from a target
  * Get a target with options
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
 class AclParser extends Parser implements ParserInterface, AclParserInterface
@@ -39,8 +40,8 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     /**
      * AclParser constructor.
      *
-     * @param FileInterface       $file
-     * @param null                $target
+     * @param FileInterface $file
+     * @param null          $target
      */
     public function __construct(FileInterface $file, $target = null)
     {
@@ -53,8 +54,10 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
      * Add a acl for a target.
      *
      * @param $add
-     * @return $this
+     *
      * @throws DuplicationErrorException
+     *
+     * @return $this
      */
     public function add($add)
     {
@@ -62,17 +65,17 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         $acl = $this->get();
 
         if ($acl->isEmpty()) {
-            $this->fileContent->push($this->target . ' ' . $add);
+            $this->fileContent->push($this->target.' '.$add);
         } else {
             $key = $acl->search($add);
 
             if ($key !== false) {
-                throw new DuplicationErrorException('The acl ' . $add . ' was already added');
+                throw new DuplicationErrorException('The acl '.$add.' was already added');
             }
 
             $acl->push($add);
 
-            $line = $this->target . ' ' . $acl->implode(', ');
+            $line = $this->target.' '.$acl->implode(', ');
 
             $this->fileContent->put($this->targetId, $line);
         }
@@ -84,9 +87,11 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
      * Delete acl from a target.
      *
      * @param $delete
-     * @return $this
+     *
      * @throws NotFoundException
      * @throws ParserErrorException
+     *
+     * @return $this
      */
     public function delete($delete)
     {
@@ -98,13 +103,13 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         $acl = $this->get();
 
         if ($acl->isEmpty()) {
-            throw new NotFoundException('The acl ' . $delete . ' was not found on target ' . $this->target);
+            throw new NotFoundException('The acl '.$delete.' was not found on target '.$this->target);
         }
 
         $key = $acl->search($delete);
 
         if ($key === false) {
-            throw new NotFoundException('The acl ' . $delete . ' was not found on target ' . $this->target);
+            throw new NotFoundException('The acl '.$delete.' was not found on target '.$this->target);
         }
 
         // Remove the acl
@@ -115,7 +120,7 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         if ($acl->isEmpty()) {
             $this->fileContent->forget($this->targetId);
         } else {
-            $line = $this->target . ' ' . $acl->implode(', ');
+            $line = $this->target.' '.$acl->implode(', ');
             $this->fileContent->put($this->targetId, $line);
         }
 
@@ -123,9 +128,10 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     }
 
     /**
-     * Get single or multiple acls
+     * Get single or multiple acls.
      *
      * @param bool $all
+     *
      * @return \Illuminate\Support\Collection
      */
     public function get($all = false)
@@ -138,13 +144,13 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     }
 
     /**
-     * Get all acls
+     * Get all acls.
      *
      * @return \Illuminate\Support\Collection
      */
     private function getAll()
     {
-        foreach($this->fileContent as $key => $line) {
+        foreach ($this->fileContent as $key => $line) {
             // explode array by comma we get everything
             // here except the first acl because
             // it is not separated by a comma
@@ -163,7 +169,7 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
             $data[$acl[0]] = $acls;
 
             // trim spaces
-            $data[$acl[0]] = $acls->map(function($item, $key) {
+            $data[$acl[0]] = $acls->map(function ($item, $key) {
                 return trim($item);
             });
         }
@@ -172,10 +178,11 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     }
 
     /**
-     * Get single acl
+     * Get single acl.
+     *
+     * @throws ParserErrorException
      *
      * @return \Illuminate\Support\Collection
-     * @throws ParserErrorException
      */
     private function getSingle()
     {
@@ -197,15 +204,15 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
         // remove index with iqn
         unset($acls[0]);
 
-        if(! isset($acl[1])) {
-            throw new ParserErrorException('The target ' . $this->target . ' has no acls');
+        if (!isset($acl[1])) {
+            throw new ParserErrorException('The target '.$this->target.' has no acls');
         }
 
         // prepend the extract acl to the collection
         $acls->prepend($acl[1]);
 
         // trim spaces
-        $acls = $acls->map(function($item, $key) {
+        $acls = $acls->map(function ($item, $key) {
             return trim($item);
         });
 
@@ -213,16 +220,16 @@ class AclParser extends Parser implements ParserInterface, AclParserInterface
     }
 
     /**
-     * Find iqn in file
+     * Find iqn in file.
      *
      * @return mixed
      */
     private function findIqn()
     {
-       return $this->fileContent->search(function($item, $key) {
-           if (strpos($item, $this->target) !== false) {
-               return true;
-           }
-       });
+        return $this->fileContent->search(function ($item, $key) {
+            if (strpos($item, $this->target) !== false) {
+                return true;
+            }
+        });
     }
 }

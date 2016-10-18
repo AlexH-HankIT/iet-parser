@@ -2,19 +2,20 @@
 
 namespace MrCrankHank\IetParser\OptionParserDelete;
 
-use PHPUnit_Framework_TestCase;
 use MrCrankHank\IetParser\File;
-use MrCrankHank\IetParser\TestTrait;
 use MrCrankHank\IetParser\Parser\GlobalOptionParser;
+use MrCrankHank\IetParser\TestTrait;
+use PHPUnit_Framework_TestCase;
 
-class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
+class GlobalOptionParserDeleteTest extends PHPUnit_Framework_TestCase
+{
     use TestTrait;
 
     public static function deleteProvider()
     {
         return [
             ['case1_files', 'iet.sample.conf', 'iet.expected.testDelete.conf'],
-            ['case2_files', 'iet.sample.conf', 'iet.expected.testDelete.conf']
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testDelete.conf'],
         ];
     }
 
@@ -27,28 +28,28 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
      */
     public function testDelete($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->delete('IncomingUser user2 password2')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function notFoundErrorProvider()
     {
         return [
             ['case1_files', 'iet.sample.conf'],
-            ['case2_files', 'iet.sample.conf']
+            ['case2_files', 'iet.sample.conf'],
         ];
     }
 
@@ -62,18 +63,18 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
 
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->delete('This wont be found')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -94,21 +95,21 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
      */
     public function testDeleteIncomingUserHelperMethod($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->deleteIncomingUser('user2', 'password2')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function deleteOutgoingUserHelperMethodProver()
@@ -128,20 +129,20 @@ class GlobalOptionParserDelete extends PHPUnit_Framework_TestCase {
      */
     public function testDeleteOutgoingUserHelperMethod($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             $parser->deleteOutgoingUser('user2', 'password2')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 }

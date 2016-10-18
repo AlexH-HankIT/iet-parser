@@ -2,34 +2,36 @@
 
 /**
  * This file contains the Normalizer
- * of a iet config file via console
+ * of a iet config file via console.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser\Parser;
+
 use MrCrankHank\IetParser\Interfaces\NormalizerInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
- * Class Normalizer
+ * Class Normalizer.
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
 class Normalizer extends Parser implements ParserInterface, NormalizerInterface
 {
     /**
-     * Normalize a ietd file
+     * Normalize a ietd file.
      *
      * It checks and normalizes the following:
      *      multiple spaces are replaced with one
@@ -79,18 +81,19 @@ class Normalizer extends Parser implements ParserInterface, NormalizerInterface
     }
 
     /**
-     * Return a diff of the normalization without writing anything
+     * Return a diff of the normalization without writing anything.
      *
      * @return string
      */
     public function diff()
     {
         $data = $this->normalize();
+
         return Diff::toString(Diff::compare($data['originalFileContentString'], $data['fileContentString']));
     }
 
     /**
-     * Write the normalized data to the file
+     * Write the normalized data to the file.
      *
      * This violates the Liskov Substitution principle :S
      *
@@ -102,9 +105,9 @@ class Normalizer extends Parser implements ParserInterface, NormalizerInterface
     }
 
     /**
-     * Verify if a file is already normalized
+     * Verify if a file is already normalized.
      *
-     * @return boolean
+     * @return bool
      */
     public function check()
     {
