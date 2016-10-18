@@ -1,39 +1,41 @@
 <?php
 
 /**
- * This file contains the ProcParser class
+ * This file contains the ProcParser class.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser\Parser;
 
+use MrCrankHank\IetParser\Exceptions\ParserErrorException;
 use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 use MrCrankHank\IetParser\Interfaces\ProcParserInterface;
-use MrCrankHank\IetParser\Exceptions\ParserErrorException;
 
 /**
- * Class ProcParser
+ * Class ProcParser.
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-class ProcParser extends Parser implements ParserInterface, ProcParserInterface {
+class ProcParser extends Parser implements ParserInterface, ProcParserInterface
+{
     /**
      * Helper property. To store the last
-     * iqn for the next loop iteration
+     * iqn for the next loop iteration.
      *
-     * @var int|boolean
+     * @var int|bool
      */
     private $index;
 
@@ -49,7 +51,7 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     private $id;
 
     /**
-     * Indicates if the file is empty
+     * Indicates if the file is empty.
      *
      * @var bool
      */
@@ -131,7 +133,7 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     }
 
     /**
-     * Setter for the $tidIndex property
+     * Setter for the $tidIndex property.
      *
      * @param $tidIndex boolean tidIndex
      *
@@ -145,7 +147,7 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
     }
 
     /**
-     * Getter for the $tidIndex property
+     * Getter for the $tidIndex property.
      *
      * @return bool
      */
@@ -204,8 +206,8 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
             if (substr($line, 0, 3) === 'tid') {
                 // Check for the target definition line
                 // It contains the name and tid
-                preg_match("/name:(.*)/", $line, $iqn);
-                preg_match("/tid:([0-9].*?) /", $line, $tid);
+                preg_match('/name:(.*)/', $line, $iqn);
+                preg_match('/tid:([0-9].*?) /', $line, $tid);
 
                 // save the data from this iteration
                 // so the next cycle knows to which
@@ -227,8 +229,8 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
                     throw new ParserErrorException('The session file is malformed');
                 }
 
-                preg_match("/sid:(.*?) /", $line, $sid);
-                preg_match("/initiator:(.*)/", $line, $initiator);
+                preg_match('/sid:(.*?) /', $line, $sid);
+                preg_match('/initiator:(.*)/', $line, $initiator);
 
                 $this->id = $sid[1];
 
@@ -243,11 +245,11 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
                     throw new ParserErrorException('The session file is malformed');
                 }
 
-                preg_match("/cid:([0-9].*?) /", $line, $cid);
-                preg_match("/ip:(.*?) /", $line, $ip);
-                preg_match("/state:(.*?) /", $line, $state);
-                preg_match("/hd:(.*?) /", $line, $hd);
-                preg_match("/dd:(.*)/", $line, $dd);
+                preg_match('/cid:([0-9].*?) /', $line, $cid);
+                preg_match('/ip:(.*?) /', $line, $ip);
+                preg_match('/state:(.*?) /', $line, $state);
+                preg_match('/hd:(.*?) /', $line, $hd);
+                preg_match('/dd:(.*)/', $line, $dd);
 
                 $data[$this->index][$this->id]['cid'] = $cid[1];
                 $data[$this->index][$this->id]['ip'] = $ip[1];
@@ -262,11 +264,13 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
 
     /**
      * Does the same as the parseSession function,
-     * but for volumes ;-)
+     * but for volumes ;-).
      *
      * @param $tidIndex
-     * @return \Illuminate\Support\Collection
+     *
      * @throws ParserErrorException
+     *
+     * @return \Illuminate\Support\Collection
      */
     private function parseVolume($tidIndex)
     {
@@ -274,8 +278,8 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
             if (substr($line, 0, 3) === 'tid') {
                 // Check for the target definition line
                 // It contains the name and tid
-                preg_match("/name:(.*)/", $line, $iqn);
-                preg_match("/tid:([0-9].*?) /", $line, $tid);
+                preg_match('/name:(.*)/', $line, $iqn);
+                preg_match('/tid:([0-9].*?) /', $line, $tid);
 
                 // save the data from this iteration
                 // so the next cycle knows to which
@@ -295,13 +299,13 @@ class ProcParser extends Parser implements ParserInterface, ProcParserInterface 
                     throw new ParserErrorException('The volume file is malformed');
                 }
 
-                preg_match("/lun:([0-9])/", $line, $id);
-                preg_match("/state:([0-9])/", $line, $state);
-                preg_match("/iotype:(.*?) /", $line, $iotype);
-                preg_match("/iomode:(.*?) /", $line, $iomode);
-                preg_match("/blocks:(.*?) /", $line, $blocks);
-                preg_match("/blocksize:(.*?) /", $line, $blocksize);
-                preg_match("/path:(.*)/", $line, $path);
+                preg_match('/lun:([0-9])/', $line, $id);
+                preg_match('/state:([0-9])/', $line, $state);
+                preg_match('/iotype:(.*?) /', $line, $iotype);
+                preg_match('/iomode:(.*?) /', $line, $iomode);
+                preg_match('/blocks:(.*?) /', $line, $blocks);
+                preg_match('/blocksize:(.*?) /', $line, $blocksize);
+                preg_match('/path:(.*)/', $line, $path);
 
                 $data[$this->index][$id[1]]['state'] = $state[1];
                 $data[$this->index][$id[1]]['iotype'] = $iotype[1];

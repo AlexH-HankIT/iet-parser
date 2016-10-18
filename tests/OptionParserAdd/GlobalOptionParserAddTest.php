@@ -2,29 +2,29 @@
 
 namespace MrCrankHank\IetParser\OptionParserAdd;
 
-use PHPUnit_Framework_TestCase;
-use MrCrankHank\IetParser\File;
-use MrCrankHank\IetParser\TestTrait;
-use MrCrankHank\IetParser\Parser\GlobalOptionParser;
 use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
+use MrCrankHank\IetParser\File;
+use MrCrankHank\IetParser\Parser\GlobalOptionParser;
+use MrCrankHank\IetParser\TestTrait;
+use PHPUnit_Framework_TestCase;
 
 /**
- * Class GlobalOptionParserTestAdd
- * @package MrCrankHank\IetParser\tests
+ * Class GlobalOptionParserTestAdd.
  */
-class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
+class GlobalOptionParserAddTest extends PHPUnit_Framework_TestCase
+{
     use TestTrait;
 
     public static function addProvider()
     {
         return [
             ['case1_files', 'iet.sample.conf', 'iet.expected.testAdd.conf'],
-            ['case2_files', 'iet.sample.conf', 'iet.expected.testAdd.conf']
+            ['case2_files', 'iet.sample.conf', 'iet.expected.testAdd.conf'],
         ];
     }
 
     /**
-     * Test if I can add a parameter to the file
+     * Test if I can add a parameter to the file.
      *
      * @param $dir
      * @param $sourceFile
@@ -34,33 +34,33 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testAdd($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
-            $parser->add("IncomingUser user password")->write();
+            $parser->add('IncomingUser user password')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function duplicationErrorProvider()
     {
         return [
             ['case1_files', 'iet.sample.conf'],
-            ['case2_files', 'iet.sample.conf']
+            ['case2_files', 'iet.sample.conf'],
         ];
     }
 
     /**
-     * Test if the duplication check is working
+     * Test if the duplication check is working.
      *
      * @param $dir
      * @param $sourceFile
@@ -69,24 +69,24 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testDuplicationError($dir, $sourceFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             try {
-                $parser->add("IncomingUser user password")->write();
-                $parser->add("IncomingUser user password")->write();
-                $this->fail("Test did not throw DuplicationError exception!");
+                $parser->add('IncomingUser user password')->write();
+                $parser->add('IncomingUser user password')->write();
+                $this->fail('Test did not throw DuplicationError exception!');
             } catch (DuplicationErrorException $e) {
                 $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
             }
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -99,7 +99,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Test the addOutgoingUser() helper method
+     * Test the addOutgoingUser() helper method.
      *
      * @param $dir
      * @param $sourceFile
@@ -109,25 +109,25 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testAddOutgoingUserHelperMethod($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             try {
-                $parser->addOutgoingUser("user", "password")->write();
+                $parser->addOutgoingUser('user', 'password')->write();
             } catch (DuplicationErrorException $e) {
                 $this->assertEquals($e->getMessage(), 'The option OutgoingUser user password is already set.');
             }
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function addIncomingUserHelperMethodProvider()
@@ -139,7 +139,7 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Test the addIncomingUser() helper method
+     * Test the addIncomingUser() helper method.
      *
      * @param $dir
      * @param $sourceFile
@@ -149,24 +149,24 @@ class GlobalOptionParserTestAdd extends PHPUnit_Framework_TestCase {
      */
     public function testAddIncomingUserHelperMethod($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new GlobalOptionParser($file);
 
         if ($objects['normalizer']->check()) {
             try {
-                $parser->addIncomingUser("user", "password")->write();
+                $parser->addIncomingUser('user', 'password')->write();
             } catch (DuplicationErrorException $e) {
                 $this->assertEquals($e->getMessage(), 'The option IncomingUser user password is already set.');
             }
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 }

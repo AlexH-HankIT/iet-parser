@@ -1,51 +1,52 @@
 <?php
 
 /**
- * This file contains the TargetParser class
+ * This file contains the TargetParser class.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser\Parser;
 
 use Illuminate\Support\Collection;
+use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
+use MrCrankHank\IetParser\Exceptions\NotFoundException;
+use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
 use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
-use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Interfaces\TargetParserInterface;
-use MrCrankHank\IetParser\Exceptions\TargetNotEmptyException;
-use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
 
 /**
- * Class TargetParser
+ * Class TargetParser.
  *
  * Add/delete targets to/from the iet config file
  * Add/delete options to/from a target
  * Get a target with options
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
 class TargetParser extends Parser implements ParserInterface, TargetParserInterface
 {
     /**
-     * Line of the next target in the $this->fileContent collection
+     * Line of the next target in the $this->fileContent collection.
      *
      * @var bool
      */
     protected $nextTargetId;
 
     /**
-     * Contains the id of the last added lun, if applicable
+     * Contains the id of the last added lun, if applicable.
      *
      * @var string
      */
@@ -54,8 +55,8 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     /**
      * TargetParser constructor.
      *
-     * @param FileInterface       $file
-     * @param string              $target
+     * @param FileInterface $file
+     * @param string        $target
      */
     public function __construct(FileInterface $file, $target = null)
     {
@@ -66,30 +67,30 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Add a target
-     *
-     * @return $this
+     * Add a target.
      *
      * @throws DuplicationErrorException
+     *
+     * @return $this
      */
     public function addTarget()
     {
         if ($this->targetId !== false) {
-            throw new DuplicationErrorException('The target ' . $this->target . ' already exists');
+            throw new DuplicationErrorException('The target '.$this->target.' already exists');
         }
 
-        $this->fileContent->push('Target ' . $this->target, 'new');
+        $this->fileContent->push('Target '.$this->target, 'new');
 
         return $this;
     }
 
     /**
-     * Delete a target
-     *
-     * @return $this
+     * Delete a target.
      *
      * @throws NotFoundException
      * @throws TargetNotEmptyException
+     *
+     * @return $this
      */
     public function deleteTarget()
     {
@@ -98,8 +99,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         $options = $this->getOptions();
 
         if ($options !== false) {
-            throw new TargetNotEmptyException('The target ' . $this->target . ' has options defined');
-
+            throw new TargetNotEmptyException('The target '.$this->target.' has options defined');
         }
 
         $this->fileContent->forget($this->targetId);
@@ -109,13 +109,13 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
     /**
      * Add a option to a target
-     * Updates are also supported
+     * Updates are also supported.
      *
      * @param string $option Option
      *
-     * @return $this
-     *
      * @throws NotFoundException
+     *
+     * @return $this
      */
     public function addOption($option)
     {
@@ -125,7 +125,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
 
         if ($key === false) {
             $target = $this->fileContent->get($this->targetId);
-            $this->fileContent->put($this->targetId, $target . "\n" . $option);
+            $this->fileContent->put($this->targetId, $target."\n".$option);
         } else {
             // Replace existing option with new one
             $this->fileContent->put($key, $option);
@@ -137,13 +137,13 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     /**
      * Delete a option
      * This should not be used to delete a lun.
-     * This function also works, if the value is unknown
+     * This function also works, if the value is unknown.
      *
-     * @param string  $option     Option without value
-     *
-     * @return $this
+     * @param string $option Option without value
      *
      * @throws NotFoundException
+     *
+     * @return $this
      */
     public function deleteOption($option)
     {
@@ -152,21 +152,22 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         $options = $this->getOptions();
 
         if ($options === false) {
-            throw new NotFoundException('The target ' . $this->target . ' has no options');
+            throw new NotFoundException('The target '.$this->target.' has no options');
         }
 
         $key = $this->isOptionSet($option);
 
         if ($key === false) {
-            throw new NotFoundException('The option ' . $option . ' was not found');
+            throw new NotFoundException('The option '.$option.' was not found');
         }
 
         $this->fileContent->forget($key);
+
         return $this;
     }
 
     /**
-     * Get all options of the target
+     * Get all options of the target.
      *
      * ToDo: Add param for ignoring luns
      *
@@ -194,11 +195,11 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Retrieve all or a specific lun
+     * Retrieve all or a specific lun.
      *
      * @param bool $id
      *
-     * @return Collection|boolean
+     * @return Collection|bool
      */
     public function getLun($id = false)
     {
@@ -254,11 +255,11 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      * ID incrementation is supported.
      *
      * @param $path
-     * @param string        $type      fileio|blockio|nullio
-     * @param string|null   $scsiId    scsi_id
-     * @param string|null   $scsiSN    scsi_sn
-     * @param string|null   $ioMode    wb|ro|wt
-     * @param string|null   $blockSize size
+     * @param string      $type      fileio|blockio|nullio
+     * @param string|null $scsiId    scsi_id
+     * @param string|null $scsiSN    scsi_sn
+     * @param string|null $ioMode    wb|ro|wt
+     * @param string|null $blockSize size
      *
      * @throws NotFoundException
      *
@@ -268,31 +269,31 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     {
         $this->targetExistsOrFail();
 
-        $params['path'] = 'Path=' . $path;
+        $params['path'] = 'Path='.$path;
 
         if (isset($type)) {
-            $params['type'] = 'Type=' . $type;
+            $params['type'] = 'Type='.$type;
         }
 
-        if(isset($scsiId)) {
-            $params['scsiId'] = 'ScsiId=' . $scsiId;
+        if (isset($scsiId)) {
+            $params['scsiId'] = 'ScsiId='.$scsiId;
         }
 
         if (isset($scsiSN)) {
-            $params['scsiIn'] = 'ScsiSN=' . $scsiSN;
+            $params['scsiIn'] = 'ScsiSN='.$scsiSN;
         }
 
         if (isset($ioMode)) {
-            $params['ioMode'] = 'IOMode=' . $ioMode;
+            $params['ioMode'] = 'IOMode='.$ioMode;
         }
 
         if (isset($blockSize)) {
-            $params['blocksize'] = 'BlockSize=' . $blockSize;
+            $params['blocksize'] = 'BlockSize='.$blockSize;
         }
 
         $id = $this->getNextFreeLun();
 
-        $this->addOption('Lun ' . $id . ' ' . implode(',', $params));
+        $this->addOption('Lun '.$id.' '.implode(',', $params));
 
         $this->lastAddedLun = $id;
 
@@ -300,7 +301,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Delete lun from a target
+     * Delete lun from a target.
      *
      * @param int $id id of the lun
      *
@@ -323,51 +324,51 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Add a outgoing user to a target
+     * Add a outgoing user to a target.
      *
      * @param string $user     User
      * @param string $password Password
      */
     public function addOutgoingUser($user, $password)
     {
-        $this->addOption('OutgoingUser ' . $user . ' ' . $password);
+        $this->addOption('OutgoingUser '.$user.' '.$password);
     }
 
     /**
-     * Delete outgoing user from a target
+     * Delete outgoing user from a target.
      *
      * @param string $user     User
      * @param string $password Password
      */
     public function deleteOutgoingUser($user, $password)
     {
-        $this->deleteOption('OutgoingUser ' . $user . ' ' . $password);
+        $this->deleteOption('OutgoingUser '.$user.' '.$password);
     }
 
     /**
-     * Add a incoming user to atarget
+     * Add a incoming user to atarget.
      *
      * @param string $user     User
      * @param string $password Password
      */
     public function addIncomingUser($user, $password)
     {
-        $this->addOption('Incoming ' . $user . ' ' . $password);
+        $this->addOption('Incoming '.$user.' '.$password);
     }
 
     /**
-     * Delete incoming user from a target
+     * Delete incoming user from a target.
      *
      * @param string $user     User
      * @param string $password Password
      */
     public function deleteIncomingUser($user, $password)
     {
-        $this->deleteOption('Incoming ' . $user . ' ' . $password);
+        $this->deleteOption('Incoming '.$user.' '.$password);
     }
 
     /**
-     * Return the last added lun
+     * Return the last added lun.
      *
      * @return mixed
      */
@@ -386,7 +387,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Find a target definition
+     * Find a target definition.
      *
      * @return bool|mixed
      */
@@ -398,7 +399,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
             $lastKey = $this->fileContent->keys()->last();
 
             for ($i = $id; $i <= $lastKey; $i++) {
-                if ($this->fileContent->has($i) && $this->fileContent->get($i) === 'Target ' . $this->target) {
+                if ($this->fileContent->has($i) && $this->fileContent->get($i) === 'Target '.$this->target) {
                     return $i;
                 }
 
@@ -415,7 +416,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Find the target definition after the given one
+     * Find the target definition after the given one.
      *
      * @return bool
      */
@@ -446,9 +447,9 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
      *
      * @param string $option Option
      *
-     * @return bool|mixed
-     *
      * @throws NotFoundException
+     *
+     * @return bool|mixed
      */
     protected function isOptionSet($option)
     {
@@ -468,7 +469,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
                         // The space after $line[1] is important
                         // otherwise Lun 3 would be replaced with
                         // Lun 36 and so on :S
-                        if (strpos($option, $line[0] . ' ' . $line[1] . ' ') !== false) {
+                        if (strpos($option, $line[0].' '.$line[1].' ') !== false) {
                             return $i;
                         }
                     } else {
@@ -486,11 +487,12 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     }
 
     /**
-     * Get the next free lun id
+     * Get the next free lun id.
      *
      * @return bool|int
      */
-    protected function getNextFreeLun() {
+    protected function getNextFreeLun()
+    {
         if ($this->targetId === false) {
             return false;
         }
@@ -514,9 +516,8 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         return array_shift($ids);
     }
 
-
     /**
-     * Throw an exception if the target does not exist
+     * Throw an exception if the target does not exist.
      *
      * @throws NotFoundException
      *
@@ -525,7 +526,7 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
     private function targetExistsOrFail()
     {
         if ($this->targetId === false) {
-            throw new NotFoundException('The target ' . $this->target . ' was not found');
+            throw new NotFoundException('The target '.$this->target.' was not found');
         }
     }
 
@@ -534,12 +535,12 @@ class TargetParser extends Parser implements ParserInterface, TargetParserInterf
         $data = $this->getLun($id);
 
         if ($data === false) {
-            throw new NotFoundException('The lun ' . $id . ' was not found on ' . $this->target);
+            throw new NotFoundException('The lun '.$id.' was not found on '.$this->target);
         }
     }
 
     private function _detectLun($position, $lunId)
     {
-        return substr($this->fileContent->get($position), 0, 4 + strlen($lunId)) === 'Lun ' . $lunId;
+        return substr($this->fileContent->get($position), 0, 4 + strlen($lunId)) === 'Lun '.$lunId;
     }
 }

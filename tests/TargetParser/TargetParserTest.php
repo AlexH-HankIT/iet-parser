@@ -3,9 +3,9 @@
 namespace MrCrankHank\IetParser\TargetParser;
 
 use MrCrankHank\IetParser\File;
+use MrCrankHank\IetParser\Parser\TargetParser;
 use MrCrankHank\IetParser\TestTrait;
 use PHPUnit_Framework_TestCase;
-use MrCrankHank\IetParser\Parser\TargetParser;
 
 class TargetParserTest extends PHPUnit_Framework_TestCase
 {
@@ -26,22 +26,23 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider addTargetProvider
      */
-    public function testAddTarget($dir, $sourceFile, $expectedFile) {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+    public function testAddTarget($dir, $sourceFile, $expectedFile)
+    {
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:testAdd');
 
         if ($objects['normalizer']->check()) {
             $parser->addTarget()->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function addTargetDuplicationErrorProvider()
@@ -62,18 +63,18 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\DuplicationErrorException');
 
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->addTarget()->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -94,21 +95,21 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteTarget($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:delete');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteTarget()->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function deleteTargetNotFoundExceptionProvider()
@@ -129,18 +130,18 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
 
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:notFound');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteTarget()->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -162,18 +163,18 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\TargetNotEmptyException');
 
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteTarget()->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -194,21 +195,21 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testAddOption($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->addOption('This is a awesome option')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function addOptionUpdateProvider()
@@ -228,21 +229,21 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testAddOptionUpdate($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server17');
 
         if ($objects['normalizer']->check()) {
             $parser->addOption('ImmediateData No')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function addOptionNotFoundExceptionProvider()
@@ -263,18 +264,18 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
     {
         $this->expectException('MrCrankHank\IetParser\Exceptions\NotFoundException');
 
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:notFound');
 
         if ($objects['normalizer']->check()) {
             $parser->addOption('This is a awesome option')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -295,21 +296,21 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteOption($dir, $sourceFile, $expectedFile)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:ex');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteOption('MaxBurstLength')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedFile, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedFile, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function getOptionsProvider()
@@ -320,14 +321,14 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
                     'IncomingUser user2 password2',
                     'ImmediateData Yes',
                     'Lun 0 Type=fileio,Path=/dev/VG_Datastore02/LV_server2',
-                    'Lun 1 Type=blockio,Path=/dev/VG_Datastore03/LV_server2'
-                ]
+                    'Lun 1 Type=blockio,Path=/dev/VG_Datastore03/LV_server2',
+                ],
             ],
             ['case2_files', 'iet.sample.conf',
                 [
                     'ImmediateData Yes',
                     'Lun 0 Type=fileio,Path=/dev/VG_Datastore02/LV_server2',
-                ]
+                ],
             ],
         ];
     }
@@ -341,11 +342,11 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testGetOptions($dir, $sourceFile, $expectedData)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
@@ -354,7 +355,7 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
 
             $this->assertEquals(collect($expectedData), $data);
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -364,21 +365,21 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
             ['case1_files', 'iet.sample.conf',
                 [
                     0 => [
-                        'id' => '1',
+                        'id'   => '1',
                         'type' => 'blockio',
-                        'path' => '/dev/VG_Datastore03/LV_server2'
-                    ]
-                ]
+                        'path' => '/dev/VG_Datastore03/LV_server2',
+                    ],
+                ],
             ],
             ['case2_files', 'iet.sample.conf',
                 [
                     0 => [
-                        'id' => '0',
+                        'id'   => '0',
                         'type' => 'fileio',
-                        'path' => '/dev/VG_Datastore02/LV_server2'
-                    ]
-                ]
-            ]
+                        'path' => '/dev/VG_Datastore02/LV_server2',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -391,11 +392,11 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testGetLunSingle($dir, $sourceFile, $expectedData)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
@@ -404,7 +405,7 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
 
             $this->assertEquals(collect($expectedData), $data);
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -413,32 +414,32 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
         return [
             ['case1_files', 'iet.sample.conf', [
                 [
-                    'id' => '0',
-                    'type' => 'fileio',
+                    'id'     => '0',
+                    'type'   => 'fileio',
                     'iomode' => 'wt',
-                    'path' => '/dev/VG_Datastore01/LV_server43'
+                    'path'   => '/dev/VG_Datastore01/LV_server43',
                 ],
                 [
-                    'id' => '1',
+                    'id'   => '1',
                     'type' => 'fileio',
-                    'path' => '/dev/VG_Datastore02/LV_server18'
-                ]
-            ]
+                    'path' => '/dev/VG_Datastore02/LV_server18',
+                ],
+            ],
             ],
             ['case2_files', 'iet.sample.conf', [
                 [
-                    'id' => '0',
-                    'type' => 'fileio',
+                    'id'     => '0',
+                    'type'   => 'fileio',
                     'iomode' => 'wt',
-                    'path' => '/dev/VG_Datastore01/LV_server43'
+                    'path'   => '/dev/VG_Datastore01/LV_server43',
                 ],
                 [
-                    'id' => '1',
+                    'id'   => '1',
                     'type' => 'fileio',
-                    'path' => '/dev/VG_Datastore02/LV_server18'
-                ]
-            ]
-            ]
+                    'path' => '/dev/VG_Datastore02/LV_server18',
+                ],
+            ],
+            ],
         ];
     }
 
@@ -451,11 +452,11 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testGetLun($dir, $sourceFile, $expectedData)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server18');
 
@@ -464,7 +465,7 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
 
             $this->assertEquals(collect($expectedData), $data);
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
     }
 
@@ -485,21 +486,21 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testAddLun($dir, $sourceFile, $expectedData)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->addLun('/dev/null', 'blockio')->write();
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedData, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedData, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 
     public static function deleteLunProvider()
@@ -519,22 +520,20 @@ class TargetParserTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteLun($dir, $sourceFile, $expectedData)
     {
-        $dir = __DIR__ . DIRECTORY_SEPARATOR . $dir;
+        $dir = __DIR__.DIRECTORY_SEPARATOR.$dir;
 
         $objects = $this->normalize($dir, $sourceFile);
 
-        $file = (new File)->readContent($objects['filesystem'], self::$testFile);
+        $file = (new File())->readContent($objects['filesystem'], self::$testFile);
 
         $parser = new TargetParser($file, 'iqn.2016-08.test.ing.host:server1');
 
         if ($objects['normalizer']->check()) {
             $parser->deleteLun(0)->write();
-
-
         } else {
-            $this->fail("The normalizer did not properly normalize the file!");
+            $this->fail('The normalizer did not properly normalize the file!');
         }
 
-        $this->assertFileEquals($dir . DIRECTORY_SEPARATOR . $expectedData, $dir . DIRECTORY_SEPARATOR . self::$testFile);
+        $this->assertFileEquals($dir.DIRECTORY_SEPARATOR.$expectedData, $dir.DIRECTORY_SEPARATOR.self::$testFile);
     }
 }

@@ -6,13 +6,14 @@ use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use MrCrankHank\IetParser\Parser\Normalizer;
 
-trait TestTrait {
+trait TestTrait
+{
     protected static $testFile = 'iet.test-running.conf';
     protected static $delete = true;
 
     public static function tearDownAfterClass()
     {
-       self::_removeTestFiles(__DIR__);
+        self::_removeTestFiles(__DIR__);
     }
 
     public static function setUpBeforeClass()
@@ -31,11 +32,11 @@ trait TestTrait {
 
         foreach ($files as $key => $value) {
             $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
-            if(!is_dir($path)) {
-                if($value === self::$testFile && self::$delete === true) {
+            if (!is_dir($path)) {
+                if ($value === self::$testFile && self::$delete === true) {
                     unlink($path);
                 }
-            } else if($value != "." && $value != "..") {
+            } elseif ($value != '.' && $value != '..') {
                 self::_removeTestFiles($path);
             }
         }
@@ -52,7 +53,7 @@ trait TestTrait {
         // for testing purposes: copy the sample file. So we don't change the real data
         $filesystem->copy($sourceFile, self::$testFile);
 
-        $file = (new File)->readContent($filesystem, self::$testFile);
+        $file = (new File())->readContent($filesystem, self::$testFile);
 
         // create normalizer instance
         $normalizer = new Normalizer($file);
@@ -62,7 +63,7 @@ trait TestTrait {
 
         return [
             'normalizer' => $normalizer,
-            'filesystem' => $filesystem
+            'filesystem' => $filesystem,
         ];
     }
 }
