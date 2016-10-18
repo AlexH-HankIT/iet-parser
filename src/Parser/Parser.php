@@ -1,40 +1,39 @@
 <?php
 
 /**
- * This file contains the Parser class
+ * This file contains the Parser class.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser\Parser;
 
-use League\Flysystem\Filesystem;
-use League\Flysystem\FilesystemInterface;
 use Illuminate\Support\Collection;
 use MrCrankHank\IetParser\Exceptions\NotFoundException;
 use MrCrankHank\IetParser\Interfaces\FileInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
- * Class Parser
+ * Class Parser.
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
 abstract class Parser implements ParserInterface
 {
     /**
      * Contains the extracted comments
-     * of the file
+     * of the file.
      *
      * @var
      */
@@ -42,21 +41,21 @@ abstract class Parser implements ParserInterface
 
     /**
      * Contains the file content
-     * without any modifications
+     * without any modifications.
      *
      * @var
      */
     protected $originalContent;
 
     /**
-     * Contains the iqn
+     * Contains the iqn.
      *
      * @var
      */
     protected $target;
 
     /**
-     * Line of target inside in the $this->fileContent collection
+     * Line of target inside in the $this->fileContent collection.
      *
      * @var bool|mixed
      */
@@ -75,8 +74,8 @@ abstract class Parser implements ParserInterface
     /**
      * Parser constructor.
      *
-     * @param FileInterface        $file
-     * @param string               $target     IQN
+     * @param FileInterface $file
+     * @param string        $target IQN
      */
     public function __construct(FileInterface $file, $target = null)
     {
@@ -88,7 +87,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Retrieves the file's content without any comments or newlines
+     * Retrieves the file's content without any comments or newlines.
      *
      * @return Collection
      */
@@ -102,7 +101,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Retrieves the file's content exactly as it is
+     * Retrieves the file's content exactly as it is.
      *
      * @return Collection
      */
@@ -117,11 +116,12 @@ abstract class Parser implements ParserInterface
 
     /**
      * Merge the file's content with comments
-     * and new lines and write it back
+     * and new lines and write it back.
      *
      * @return void
      */
-    public function write() {
+    public function write()
+    {
         // convert collections to arrays
         $fileContent = $this->fileContent->all();
         $comments = $this->comments->all();
@@ -139,7 +139,7 @@ abstract class Parser implements ParserInterface
         // sort the array, so the lines are correct
         ksort($fileContent);
 
-        if (! empty($new)) {
+        if (!empty($new)) {
             // push the new line as first item
             array_unshift($fileContent, $new);
         }
@@ -150,7 +150,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Write a raw string as file
+     * Write a raw string as file.
      *
      * @param string $string String to be written
      *
@@ -162,7 +162,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Reread the files content
+     * Reread the files content.
      *
      * @return void
      */
@@ -172,7 +172,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Extract comments from the file
+     * Extract comments from the file.
      *
      * @param Collection $fileContent Collection of the file's content
      *
@@ -184,6 +184,7 @@ abstract class Parser implements ParserInterface
             if (empty($line)) {
                 // save empty lines in comments array
                 $this->comments[$key] = $line;
+
                 return false;
             }
 
@@ -192,6 +193,7 @@ abstract class Parser implements ParserInterface
             if ($offset !== false) {
                 // extract the whole line if it's commented
                 $this->comments[$key] = $line;
+
                 return false;
             }
 
@@ -205,7 +207,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Find a specific global option
+     * Find a specific global option.
      *
      * @param Collection $fileContent Collection of the file's content
      * @param string     $option      Option to be found
@@ -239,7 +241,7 @@ abstract class Parser implements ParserInterface
     }
 
     /**
-     * Return the id of the first target definition
+     * Return the id of the first target definition.
      *
      * @param Collection $fileContent Collection of the file's content
      *

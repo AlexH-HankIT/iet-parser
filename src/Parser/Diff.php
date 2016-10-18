@@ -6,27 +6,29 @@
  * PHP version 5.6
  *
  * @codingStandardsIgnoreStart
+ *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Stephen Morley http://stephenmorley.org/
  * @license  CC0 1.0 Universal legal code
  * http://creativecommons.org/publicdomain/zero/1.0/legalcode
+ *
  * @link     http://code.stephenmorley.org/php/diff-implementation/
  * @link     http://stephenmorley.org/
  */
-
 namespace MrCrankHank\IetParser\Parser;
 
 /**
- * Class Diff
+ * Class Diff.
  *
  * A class containing a diff implementation
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Stephen Morley http://stephenmorley.org/
  * @license  CC0 1.0 Universal legal code
  * http://creativecommons.org/publicdomain/zero/1.0/legalcode
+ *
  * @link     http://code.stephenmorley.org/php/diff-implementation/
  */
 class Diff
@@ -42,14 +44,14 @@ class Diff
      * $compareCharacters is true), and one of the constants DIFF::UNMODIFIED (the
      * line or character is in both strings), DIFF::DELETED (the line or character
      * is only in the first string), and DIFF::INSERTED (the line or character is
-     * only in the second string). The parameters are:
+     * only in the second string). The parameters are:.
      *
-     * @param string  $string1           the first string
-     * @param string  $string2           the second string
-     * @param boolean $compareCharacters true to compare characters,
-     *                                    and false to compare
-     *                                    lines; this optional parameter
-     *                                    defaults to false
+     * @param string $string1           the first string
+     * @param string $string2           the second string
+     * @param bool   $compareCharacters true to compare characters,
+     *                                  and false to compare
+     *                                  lines; this optional parameter
+     *                                  defaults to false
      *
      * @return string
      */
@@ -97,9 +99,9 @@ class Diff
         );
 
         // generate the full diff
-        $diff = array();
+        $diff = [];
         for ($index = 0; $index < $start; $index++) {
-            $diff[] = array($sequence1[$index], self::UNMODIFIED);
+            $diff[] = [$sequence1[$index], self::UNMODIFIED];
         }
         while (count($partialDiff) > 0) {
             $diff[] = array_pop($partialDiff);
@@ -107,23 +109,22 @@ class Diff
         for ($index = $end1 + 1; $index <
         ($compareCharacters ? strlen($sequence1) :
             count($sequence1)); $index++) {
-            $diff[] = array($sequence1[$index], self::UNMODIFIED);
+            $diff[] = [$sequence1[$index], self::UNMODIFIED];
         }
 
         // return the diff
         return $diff;
-
     }
 
     /**
-     * Returns the diff for two files. The parameters are:
+     * Returns the diff for two files. The parameters are:.
      *
-     * @param string  $file1             the path to the first file
-     * @param string  $file2             the path to the second file
-     * @param boolean $compareCharacters true to compare characters,
-     *                                   and false to compare
-     *                                   lines; this optional
-     *                                   parameter defaults to false
+     * @param string $file1             the path to the first file
+     * @param string $file2             the path to the second file
+     * @param bool   $compareCharacters true to compare characters,
+     *                                  and false to compare
+     *                                  lines; this optional
+     *                                  parameter defaults to false
      *
      * @return string
      */
@@ -139,7 +140,7 @@ class Diff
 
     /**
      * Returns the table of longest common subsequence lengths for the specified
-     * sequences. The parameters are:
+     * sequences. The parameters are:.
      *
      * @param string $sequence1 the first sequence
      * @param string $sequence2 the second sequence
@@ -162,13 +163,13 @@ class Diff
         $length2 = $end2 - $start + 1;
 
         // initialise the table
-        $table = array(array_fill(0, $length2 + 1, 0));
+        $table = [array_fill(0, $length2 + 1, 0)];
 
         // loop over the rows
         for ($index1 = 1; $index1 <= $length1; $index1++) {
 
             // create the new row
-            $table[$index1] = array(0);
+            $table[$index1] = [0];
 
             // loop over the columns
             for ($index2 = 1; $index2 <= $length2; $index2++) {
@@ -184,18 +185,16 @@ class Diff
                         $table[$index1][$index2 - 1]
                     );
                 }
-
             }
         }
 
         // return the table
         return $table;
-
     }
 
     /**
      * Returns the partial diff for the specificed sequences, in reverse order.
-     * The parameters are:
+     * The parameters are:.
      *
      * @param string $table     the table returned by the _computeTable function
      * @param string $sequence1 the first sequence
@@ -212,7 +211,7 @@ class Diff
     ) {
 
         //  initialise the diff
-        $diff = array();
+        $diff = [];
 
         // initialise the indices
         $index1 = count($table) - 1;
@@ -229,37 +228,32 @@ class Diff
             ) {
 
                 // update the diff and the indices
-                $diff[] = array($sequence1[$index1 + $start - 1], self::UNMODIFIED);
+                $diff[] = [$sequence1[$index1 + $start - 1], self::UNMODIFIED];
                 $index1--;
                 $index2--;
-
             } elseif ($index2 > 0
                 && $table[$index1][$index2]
                 == $table[$index1][$index2 - 1]
             ) {
                 // update the diff and the indices
-                $diff[] = array($sequence2[$index2 + $start - 1], self::INSERTED);
+                $diff[] = [$sequence2[$index2 + $start - 1], self::INSERTED];
                 $index2--;
-
             } else {
 
                 // update the diff and the indices
-                $diff[] = array($sequence1[$index1 + $start - 1], self::DELETED);
+                $diff[] = [$sequence1[$index1 + $start - 1], self::DELETED];
                 $index1--;
-
             }
-
         }
 
         // return the diff
         return $diff;
-
     }
 
     /**
      * Returns a diff as a string, where unmodified lines are prefixed by '  ',
      * deletions are prefixed by '- ', and insertions are prefixed by '+ '. The
-     * parameters are:
+     * parameters are:.
      *
      * @param string $diff      the diff array
      * @param string $separator the separator between lines;
@@ -277,31 +271,29 @@ class Diff
         foreach ($diff as $line) {
             // extend the string with the line
             switch ($line[1]) {
-            case self::UNMODIFIED :
-                $string .= '  ' . $line[0];
+            case self::UNMODIFIED:
+                $string .= '  '.$line[0];
                 break;
-            case self::DELETED    :
-                $string .= '- ' . $line[0];
+            case self::DELETED:
+                $string .= '- '.$line[0];
                 break;
-            case self::INSERTED   :
-                $string .= '+ ' . $line[0];
+            case self::INSERTED:
+                $string .= '+ '.$line[0];
                 break;
             }
 
             // extend the string with the separator
             $string .= $separator;
-
         }
 
         // return the string
         return $string;
-
     }
 
     /**
      * Returns a diff as an HTML string, where unmodified lines are contained
      * within 'span' elements, deletions are contained within 'del' elements, and
-     * insertions are contained within 'ins' elements. The parameters are:
+     * insertions are contained within 'ins' elements. The parameters are:.
      *
      * @param string $diff      the diff array
      * @param string $separator the separator between lines;
@@ -320,32 +312,30 @@ class Diff
 
             // extend the HTML with the line
             switch ($line[1]) {
-            case self::UNMODIFIED :
+            case self::UNMODIFIED:
                 $element = 'span';
                 break;
-            case self::DELETED    :
+            case self::DELETED:
                 $element = 'del';
                 break;
-            case self::INSERTED   :
+            case self::INSERTED:
                 $element = 'ins';
                 break;
             }
-            $html .= '<' . $element . '>'
-                . htmlspecialchars($line[0])
-                . '</' . $element . '>';
+            $html .= '<'.$element.'>'
+                .htmlspecialchars($line[0])
+                .'</'.$element.'>';
 
             // extend the HTML with the separator
             $html .= $separator;
-
         }
 
         // return the HTML
         return $html;
-
     }
 
     /**
-     * Returns a diff as an HTML table. The parameters are:
+     * Returns a diff as an HTML table. The parameters are:.
      *
      * @param string $diff        the diff array
      * @param string $indentation indentation to add to every line
@@ -360,7 +350,7 @@ class Diff
     {
 
         // initialise the HTML
-        $html = $indentation . "<table class=\"diff\">\n";
+        $html = $indentation."<table class=\"diff\">\n";
 
         // loop over the lines in the diff
         $index = 0;
@@ -412,27 +402,25 @@ class Diff
             }
 
             // extend the HTML with the new row
-            $html .= $indentation . "  <tr>\n"
-                . $indentation . '    <td class="diff'
-                . ($leftCell == $rightCell ? 'Unmodified' :
+            $html .= $indentation."  <tr>\n"
+                .$indentation.'    <td class="diff'
+                .($leftCell == $rightCell ? 'Unmodified' :
                     ($leftCell == '' ? 'Blank' : 'Deleted'))
-                . '">' . $leftCell . "</td>\n" . $indentation
-                . '    <td class="diff' .
+                .'">'.$leftCell."</td>\n".$indentation
+                .'    <td class="diff'.
                 ($leftCell == $rightCell ? 'Unmodified' :
                     ($rightCell == '' ? 'Blank' : 'Inserted'))
-                . '">' . $rightCell . "</td>\n"
-                . $indentation . "  </tr>\n";
-
+                .'">'.$rightCell."</td>\n"
+                .$indentation."  </tr>\n";
         }
 
         // return the HTML
-        return $html . $indentation . "</table>\n";
-
+        return $html.$indentation."</table>\n";
     }
 
     /**
      * Returns the content of the cell, for use in the toTable function. The
-     * parameters are:
+     * parameters are:.
      *
      * @param string $diff        the diff array
      * @param float  $indentation indentation to add to
@@ -456,14 +444,13 @@ class Diff
         // loop over the matching lines, adding them to the HTML
         while ($index < count($diff) && $diff[$index][1] == $type) {
             $html .= '<span>'
-                . htmlspecialchars($diff[$index][0])
-                . '</span>'
-                . $separator;
+                .htmlspecialchars($diff[$index][0])
+                .'</span>'
+                .$separator;
             $index++;
         }
 
         // return the HTML
         return $html;
-
     }
 }

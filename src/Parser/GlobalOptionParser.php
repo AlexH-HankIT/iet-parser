@@ -1,17 +1,17 @@
 <?php
 
 /**
- * This file contains the GlobalOptionParser class
+ * This file contains the GlobalOptionParser class.
  *
  * PHP version 5.6
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
-
 namespace MrCrankHank\IetParser\Parser;
 
 use MrCrankHank\IetParser\Exceptions\DuplicationErrorException;
@@ -20,26 +20,28 @@ use MrCrankHank\IetParser\Interfaces\GlobalOptionParserInterface;
 use MrCrankHank\IetParser\Interfaces\ParserInterface;
 
 /**
- * Class GlobalOption
+ * Class GlobalOption.
  *
  * Add/delete global options to/from a iet config file.
  * Global options are similar to target specific options.
  * But they are defined before any target definition
  *
  * @category Parser
- * @package  MrCrankHank\IetParser\Parser
+ *
  * @author   Alexander Hank <mail@alexander-hank.de>
  * @license  Apache License 2.0 http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
  * @link     null
  */
 class GlobalOptionParser extends Parser implements ParserInterface, GlobalOptionParserInterface
 {
     /**
-     * Add a global line
+     * Add a global line.
      *
      * @param string $option Add this to the file
      *
      * @throws DuplicationErrorException
+     *
      * @return $this
      */
     public function add($option)
@@ -50,8 +52,7 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
 
         // Check if the option is already defined
         if ($id !== false) {
-            throw new DuplicationErrorException('The option ' . $option . ' is already set.');
-
+            throw new DuplicationErrorException('The option '.$option.' is already set.');
         }
 
         $fileContent->prepend($option, 'new');
@@ -62,7 +63,7 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
     }
 
     /**
-     * Remove a global line
+     * Remove a global line.
      *
      * Don't remove target definitions using this function,
      * because it does not take care of target options
@@ -70,6 +71,7 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
      * @param string $option Delete this from the file
      *
      * @throws NotFoundException
+     *
      * @return $this
      */
     public function delete($option)
@@ -79,7 +81,7 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
         $id = $this->findGlobalOption($fileContent, $option);
 
         if ($id === false) {
-            throw new NotFoundException('The option ' . $option . ' was not found');
+            throw new NotFoundException('The option '.$option.' was not found');
         }
 
         $fileContent->forget($id);
@@ -90,7 +92,7 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
     }
 
     /**
-     * Convenience wrapper for adding a incoming user
+     * Convenience wrapper for adding a incoming user.
      *
      * @param string $username Username
      * @param string $password Password
@@ -99,11 +101,11 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
      */
     public function addIncomingUser($username, $password)
     {
-        return $this->add('IncomingUser ' . $username . ' ' . $password);
+        return $this->add('IncomingUser '.$username.' '.$password);
     }
 
     /**
-     * Convenience wrapper for adding a outgoing user
+     * Convenience wrapper for adding a outgoing user.
      *
      * @param string $username Username
      * @param string $password Password
@@ -112,11 +114,11 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
      */
     public function addOutgoingUser($username, $password)
     {
-        return $this->add('OutgoingUser ' . $username . ' ' . $password);
+        return $this->add('OutgoingUser '.$username.' '.$password);
     }
 
     /**
-     * Convenience wrapper for deleting a incoming user
+     * Convenience wrapper for deleting a incoming user.
      *
      * @param string $username Username
      * @param string $password Password
@@ -125,11 +127,11 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
      */
     public function deleteIncomingUser($username, $password)
     {
-        return $this->delete('IncomingUser ' . $username . ' ' . $password);
+        return $this->delete('IncomingUser '.$username.' '.$password);
     }
 
     /**
-     * Convenience wrapper for deleting a outgoing user
+     * Convenience wrapper for deleting a outgoing user.
      *
      * @param string $username Username
      * @param string $password Password
@@ -138,6 +140,6 @@ class GlobalOptionParser extends Parser implements ParserInterface, GlobalOption
      */
     public function deleteOutgoingUser($username, $password)
     {
-        return $this->delete('OutgoingUser ' . $username . ' ' . $password);
+        return $this->delete('OutgoingUser '.$username.' '.$password);
     }
 }
